@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CmdsPanel from "./CmdsPanel";
+// import profileImg from "../../uploads/images/profile.png";
+import profileImg from "../../uploads/images/formal-removebg-preview.png";
 
 const chips = [
   { label: "MERN STACK", active: true },
@@ -186,6 +188,32 @@ const HeroLayout = () => {
               >
                 CONTACT ME
               </a>
+
+                <a
+                href="https://drive.google.com/file/d/1y-GYsyhzvh29zxoSy5vYb9pvL5ugRiYO/view?usp=sharing" target="_blank"
+                className="transition-all duration-200 no-underline inline-block"
+                style={{
+                  padding: "10px 28px",
+                  background: "rgba(0,60,110,0.8)",
+                  border: "1px solid #00e5ff",
+                  color: "#00e5ff",
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: 11,
+                  letterSpacing: 2,
+                  borderRadius: 4,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(0,80,140,0.9)";
+                  e.currentTarget.style.boxShadow = "0 0 20px rgba(0,229,255,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(0,60,110,0.8)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+               Download CV
+              </a>
+
             </div>
 
             {/* chips */}
@@ -231,9 +259,9 @@ const HeroLayout = () => {
                 }}
               />
 
-              {/* photo — put your image in /public/profile.png */}
+              {/* photo */}
               <img
-                src="/profile.png"
+                src={profileImg}
                 alt="Khairul"
                 className="w-full h-full object-cover object-top rounded-xl"
                 style={{ filter: "contrast(1.1) brightness(1.05)" }}
