@@ -6,11 +6,15 @@ import Footer from "../../components/layout/Footer";
 import HeroLayout from "../../components/layout/HeroLayout";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { HiOutlineArrowRight, HiOutlineDocumentText, HiOutlineUsers, HiOutlineCode, HiOutlineEye } from "react-icons/hi";
+import About from "./About";
+import Services from "./Services";
+import Works from "./Works";
 
 const Home = () => {
   const [blogs, setBlogs]   = useState([]);
   const [team,  setTeam]    = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showHero, setShowHero] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,41 +38,59 @@ const Home = () => {
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
       <Navbar />
 
-      <HeroLayout/>
+      {showHero ? (
+        /* ── Hero Layout (profile + chips) ── */
+        <HeroLayout />
+      ) : (
+        /* ── Hero Section ── */
+        <section className="relative pt-36 pb-24 px-6 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-blue-600/8 blur-3xl" />
+            <div className="absolute top-20 right-0 w-80 h-80 rounded-full bg-violet-600/8 blur-3xl" />
+          </div>
+          <div className="relative max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-medium mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              MERN Stack Starter Template
+            </div>
+            <h1 className="text-5xl sm:text-6xl font-bold leading-tight mb-6">
+              Build your next
+              <span className="block bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+                full-stack app
+              </span>
+            </h1>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+              Production-ready MERN stack template with React Router, JWT Auth, Firebase,
+              MongoDB, Tailwind CSS, and a complete admin dashboard.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link to="/blog"
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/25">
+                Explore Blog <HiOutlineArrowRight className="w-4 h-4" />
+              </Link>
+              <Link to="/team"
+                className="flex items-center gap-2 px-6 py-3 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold rounded-xl transition-all">
+                Meet the Team
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/* ── Hero ──────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-24 px-6 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-blue-600/8 blur-3xl" />
-          <div className="absolute top-20 right-0 w-80 h-80 rounded-full bg-violet-600/8 blur-3xl" />
-        </div>
-        <div className="relative max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-medium mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-            MERN Stack Starter Template
-          </div>
-          <h1 className="text-5xl sm:text-6xl font-bold leading-tight mb-6">
-            Build your next
-            <span className="block bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
-              full-stack app
-            </span>
-          </h1>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Production-ready MERN stack template with React Router, JWT Auth, Firebase,
-            MongoDB, Tailwind CSS, and a complete admin dashboard.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/blog"
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/25">
-              Explore Blog <HiOutlineArrowRight className="w-4 h-4" />
-            </Link>
-            <Link to="/team"
-              className="flex items-center gap-2 px-6 py-3 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-semibold rounded-xl transition-all">
-              Meet the Team
-            </Link>
-          </div>
-        </div>
-      </section>
+
+{/* ----------------about----------------- */}
+      <About />
+
+{/* ----------------services----------------- */}
+      <Services />
+
+{/* ----------------works----------------- */}
+      <Works />
+
+
+
+
+
 
       {/* ── Tech stack badges ─────────────────────────────── */}
       <section className="py-6 px-6 border-y border-slate-800">
