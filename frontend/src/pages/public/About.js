@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
+
 const experiences = [
   {
     id: 1,
@@ -469,6 +470,7 @@ const About = () => {
 
   return (
     <>
+    
       {modalOpen && (
         <ExperienceModal
           initialId={selectedExpId}
