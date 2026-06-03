@@ -1,0 +1,12 @@
+{
+  "_id": "hero_main",
+  "tagline": "FULL STACK DEVELOPER & NETWORK ENGINEER",
+  "name": "KHAIRUL",
+  "subtitle": "// SYSTEM ONLINE",
+  "description": "Passionate developer and network engineer from Bangladesh. Building scalable web applications and designing robust network infrastructures. Specialized in MERN Stack, PHP/Laravel, .NET, and Cisco networking.",
+  "location": "DHAKA, BANGLADESH",
+  "statusText": "AVAILABLE FOR HIRE",
+  "cvLink": "https://drive.google.com/file/d/1y-GYsyhzvh29zxoSy5vYb9pvL5ugRiYO/view?usp=sharing",
+  "profileImage": "",
+  "chips": ["MERN STACK", "PHP / LARAVEL", ".NET", "CISCO", "CCNA", "Mikrotik"]
+}

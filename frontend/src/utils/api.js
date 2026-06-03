@@ -131,4 +131,38 @@ export const updateHero = async (heroData) => {
   return data;
 };
 
+// ─── Works ───────────────────────────────────────────────────
+export const getPublicWorks = async () => {
+  const { data } = await API.get("/works");
+  return data;
+};
+ 
+export const getAdminWorks = async () => {
+  const { data } = await API.get("/works/admin/all");
+  return data;
+};
+ 
+export const createWork = async (workData) => {
+  const { data } = await API.post("/works", workData);
+  return data;
+};
+ 
+export const updateWork = async (id, workData) => {
+  const { data } = await API.put(`/works/${id}`, workData);
+  return data;
+};
+ 
+export const deleteWork = async (id) => {
+  const { data } = await API.delete(`/works/${id}`);
+  return data;
+};
+ 
+export const toggleWork = async (id) => {
+  const { data } = await API.patch(`/works/${id}/toggle`);
+  return data;
+};
+
+
+
+
 export default API;

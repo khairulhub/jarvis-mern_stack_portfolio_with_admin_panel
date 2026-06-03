@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   HiOutlineHome, HiOutlineDocumentText, HiOutlineUsers,
-  HiOutlineLogout, HiOutlineMenu, HiOutlineX, HiOutlineCog, HiOutlinePhotograph
+  HiOutlineLogout, HiOutlineMenu, HiOutlineX, HiOutlineCog, HiOutlinePhotograph,
+  HiOutlineCode,
 } from "react-icons/hi";
 
 const navItems = [
@@ -11,6 +12,7 @@ const navItems = [
   { path: "/admin/blogs", icon: HiOutlineDocumentText, label: "Blogs" },
   { path: "/admin/team", icon: HiOutlineUsers, label: "Team" },
   { path: "/admin/hero",      icon: HiOutlinePhotograph,   label: "Hero Section" }, //new
+ { path: "/admin/works", icon: HiOutlineCode, label: "Works" }, //new
   { path: "/admin/settings", icon: HiOutlineCog, label: "Settings" },
 ];
 
