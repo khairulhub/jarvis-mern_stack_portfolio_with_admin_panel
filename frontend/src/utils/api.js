@@ -118,4 +118,17 @@ export const toggleTeamMember = async (id) => {
   return data;
 };
 
+
+
+// ─── Hero ─────────────────────────────────────────────────────
+export const getHero = async () => {
+  const { data } = await API.get("/hero");
+  return data;
+};
+
+export const updateHero = async (heroData) => {
+  const { data } = await API.put("/hero", heroData);
+  return data;
+};
+
 export default API;

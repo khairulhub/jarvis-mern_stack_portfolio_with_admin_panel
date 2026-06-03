@@ -22,6 +22,7 @@ import BlogsAdmin from "./pages/admin/BlogsAdmin";
 import BlogForm from "./pages/admin/BlogForm";
 import TeamAdmin from "./pages/admin/TeamAdmin";
 import Settings from "./pages/admin/Settings";
+import HeroAdmin from "./pages/admin/HeroAdmin";
 
 function App() {
   useEffect(() => {
@@ -75,6 +76,7 @@ function App() {
             <Route path="/admin/blogs/edit/:id"  element={<BlogForm />} />
             <Route path="/admin/team"            element={<TeamAdmin />} />
             <Route path="/admin/settings"        element={<Settings />} />
+            <Route path="/admin/hero" element={<HeroAdmin />} />
           </Route>
 
           {/* ── Fallbacks ──────────────────────────────── */}

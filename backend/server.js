@@ -20,6 +20,7 @@ app.use("/api/auth",   require("./routes/authRoutes"));
 app.use("/api/blogs",  require("./routes/blogRoutes"));
 app.use("/api/team",   require("./routes/teamRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes")); // NEW
+app.use("/api/hero", require("./routes/heroRoutes"));  // NEW
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -35,14 +36,56 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
+
+
+// Hero seed function — শুধু প্রথমবার চলবে
+const seedHero = async () => {
+  const Hero = require("./models/Hero");
+  const existing = await Hero.findById("hero_main");
+  if (existing) {
+    console.log("ℹ️  Hero already in DB — skipping seed.");
+    return;
+  }
+  await Hero.create({
+    _id: "hero_main",
+    tagline:     "FULL STACK DEVELOPER & NETWORK ENGINEER",
+    name:        "KHAIRUL",
+    subtitle:    "// SYSTEM ONLINE",
+    description: "Passionate developer and network engineer from Bangladesh. Building scalable web applications and designing robust network infrastructures. Specialized in MERN Stack, PHP/Laravel, .NET, and Cisco networking.",
+    location:    "DHAKA, BANGLADESH",
+    statusText:  "AVAILABLE FOR HIRE",
+    cvLink:      "https://drive.google.com/file/d/1y-GYsyhzvh29zxoSy5vYb9pvL5ugRiYO/view?usp=sharing",
+    profileImage: "",
+    chips: ["MERN STACK", "PHP / LARAVEL", ".NET", "CISCO", "CCNA", "Mikrotik"],
+  });
+  console.log("✅ Hero document seeded into MongoDB.");
+};
+
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log("✅ MongoDB connected");
+    await seedHero();  // ← এটা যোগ হলো
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-    process.exit(1);
-  });
+
+
+
+
+
+
+
+
+
+
+// mongoose
+//   .connect(process.env.MONGODB_URI)
+//   .then(() => {
+//     console.log("✅ MongoDB connected");
+//     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+//   })
+//   .catch((err) => {
+//     console.error("❌ MongoDB connection error:", err);
+//     process.exit(1);
+//   });
   
