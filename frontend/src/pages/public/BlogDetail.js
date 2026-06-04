@@ -24,7 +24,11 @@ const BlogDetail = () => {
     fetch();
   }, [slug, navigate]);
 
-  const readTime = blog ? Math.max(1, Math.ceil(blog.content.split(" ").length / 200)) : 0;
+  const readTime = blog
+    ? Math.max(1, Math.ceil(
+        (blog.content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length) / 200
+      ))
+    : 0;
 
   if (loading) {
     return (
@@ -73,12 +77,25 @@ const BlogDetail = () => {
             <img src={blog.coverImage} alt={blog.title} className="w-full h-72 sm:h-96 object-cover rounded-2xl mb-10 border border-slate-800" />
           )}
 
-          {/* Content */}
-          <div className="prose prose-invert prose-slate max-w-none text-slate-300 leading-relaxed">
-            {blog.content.split("\n").map((para, i) =>
-              para.trim() ? <p key={i} className="mb-4">{para}</p> : <br key={i} />
-            )}
-          </div>
+          {/* Content — supports both plain text (legacy) and HTML (rich editor) */}
+          {blog.content.trim().startsWith("<") ? (
+            <div
+              className="prose prose-invert prose-slate max-w-none text-slate-300 leading-relaxed
+                prose-headings:text-white prose-a:text-blue-400 prose-a:underline
+                prose-blockquote:border-l-blue-500 prose-blockquote:text-slate-300
+                prose-code:bg-slate-800 prose-code:text-emerald-400 prose-code:rounded prose-code:px-1
+                prose-pre:bg-slate-900 prose-pre:text-emerald-400 prose-pre:rounded-xl prose-pre:p-4
+                prose-img:rounded-xl prose-img:max-w-full prose-img:mx-auto
+                prose-ul:list-disc prose-ol:list-decimal"
+              dangerouslySetInnerHTML={{ __html: blog.content }}
+            />
+          ) : (
+            <div className="prose prose-invert prose-slate max-w-none text-slate-300 leading-relaxed">
+              {blog.content.split("\n").map((para, i) =>
+                para.trim() ? <p key={i} className="mb-4">{para}</p> : <br key={i} />
+              )}
+            </div>
+          )}
 
           {/* Tags */}
           {blog.tags?.length > 0 && (

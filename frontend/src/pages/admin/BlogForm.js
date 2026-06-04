@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBlog, updateBlog, getBlogById } from "../../utils/api";
 import AdminLayout from "../../components/layout/AdminLayout";
 import ImageUpload from "../../components/common/ImageUpload";
+import RichTextEditor from "../../components/common/RichTextEditor";
 import toast from "react-hot-toast";
 import { HiOutlineArrowLeft, HiOutlineSave } from "react-icons/hi";
 
@@ -24,7 +25,7 @@ const BlogForm = () => {
 
   useEffect(() => {
     if (!isEdit) return;
-    const fetch = async () => {
+    const fetchBlog = async () => {
       try {
         const res = await getBlogById(id);
         const { title, excerpt, content, coverImage, category, tags, status } = res.data;
@@ -36,12 +37,12 @@ const BlogForm = () => {
         setFetching(false);
       }
     };
-    fetch();
+    fetchBlog();
   }, [id, isEdit, navigate]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e, status) => {
+  const handleSubmit = async (e, statusOverride) => {
     e.preventDefault();
     if (!form.title || !form.content || !form.excerpt) {
       return toast.error("Title, excerpt and content are required");
@@ -50,7 +51,7 @@ const BlogForm = () => {
     try {
       const payload = {
         ...form,
-        status: status || form.status,
+        status: statusOverride || form.status,
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
       };
       if (isEdit) {
@@ -80,11 +81,13 @@ const BlogForm = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate("/admin/blogs")}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all">
+          <button
+            onClick={() => navigate("/admin/blogs")}
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all"
+          >
             <HiOutlineArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -95,76 +98,107 @@ const BlogForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main content */}
+            {/* ── Main content ─────────────────────────────── */}
             <div className="lg:col-span-2 space-y-5">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+                {/* Title */}
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-1.5">Title *</label>
-                  <input name="title" value={form.title} onChange={handleChange}
+                  <input
+                    name="title"
+                    value={form.title}
+                    onChange={handleChange}
                     placeholder="Enter blog title..."
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all" />
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+                  />
                 </div>
 
+                {/* Excerpt */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Excerpt *</label>
-                  <textarea name="excerpt" value={form.excerpt} onChange={handleChange} rows={3}
-                    placeholder="Brief description (max 300 chars)..."
+                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Short Description (Excerpt) *</label>
+                  <textarea
+                    name="excerpt"
+                    value={form.excerpt}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Brief description shown in blog list (max 300 chars)..."
                     maxLength={300}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all resize-none" />
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all resize-none"
+                  />
                   <p className="text-xs text-slate-600 mt-1 text-right">{form.excerpt.length}/300</p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">Content *</label>
-                  <textarea name="content" value={form.content} onChange={handleChange} rows={16}
-                    placeholder="Write your blog content here... (Markdown supported)"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all resize-none font-mono" />
-                </div>
+                {/* Rich Text Content */}
+                <RichTextEditor
+                  label="Long Description (Content) *"
+                  value={form.content}
+                  onChange={(html) => setForm((f) => ({ ...f, content: html }))}
+                />
               </div>
             </div>
 
-            {/* Sidebar options */}
+            {/* ── Sidebar ───────────────────────────────────── */}
             <div className="space-y-5">
+              {/* Publish */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-semibold text-white">Publish</h3>
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-1.5">Status</label>
-                  <select name="status" value={form.status} onChange={handleChange}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition-all">
+                  <select
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"
+                  >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-2 pt-2">
-                  <button type="submit" disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-60 shadow-lg shadow-blue-500/20">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-60 shadow-lg shadow-blue-500/20"
+                  >
                     <HiOutlineSave className="w-4 h-4" />
-                    {loading ? "Saving..." : (isEdit ? "Update Blog" : "Save Blog")}
+                    {loading ? "Saving..." : isEdit ? "Update Blog" : "Save Blog"}
                   </button>
                   {!isEdit && (
-                    <button type="button" disabled={loading}
+                    <button
+                      type="button"
+                      disabled={loading}
                       onClick={(e) => handleSubmit(e, "published")}
-                      className="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-60">
+                      className="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all disabled:opacity-60"
+                    >
                       Publish Now
                     </button>
                   )}
                 </div>
               </div>
 
+              {/* Details */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <h3 className="text-sm font-semibold text-white">Details</h3>
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-1.5">Category *</label>
-                  <select name="category" value={form.category} onChange={handleChange}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition-all">
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"
+                  >
                     {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-1.5">Tags</label>
-                  <input name="tags" value={form.tags} onChange={handleChange}
+                  <input
+                    name="tags"
+                    value={form.tags}
+                    onChange={handleChange}
                     placeholder="react, node, mongodb"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all" />
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+                  />
                   <p className="text-xs text-slate-600 mt-1">Comma-separated</p>
                 </div>
                 <div>
