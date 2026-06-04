@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { getNetworks } from "../../utils/api";
 
 /* ═══════════════════════════════════════════════════════
    NETWORK TOPICS DATA
@@ -162,616 +163,6 @@ R1# ping 8.8.8.8 source 192.168.1.1`,
       },
     ],
   },
-
-  /* ── 2. SWITCH CONFIG ──────────────────────────────── */
-  {
-    id: 2,
-    icon: "ti-switch-horizontal",
-    emoji: "🔁",
-    accentColor: "#a855f7",
-    accentBg: "rgba(168,85,247,0.08)",
-    accentBorder: "rgba(168,85,247,0.25)",
-    category: "L2/L3",
-    title: "SWITCH CONFIG",
-    subtitle: "Cisco, Juniper, VSOL, BDCOM — L2 & L3",
-    shortDesc: "Layer 2 & Layer 3 switch configuration for VLANs, trunking, STP, port security, and inter-VLAN routing on Cisco, Juniper, VSOL OLT, and BDCOM switches.",
-    diagram: `
-┌─────────────────────────────────────────────────────┐
-│               SWITCH HIERARCHY DESIGN               │
-│                                                     │
-│         [Core L3 Switch] ── 192.168.0.0/16          │
-│          Cisco C3750 / BDCOM S5750                  │
-│         ┌────────┴────────┐                         │
-│   [Dist SW-1]        [Dist SW-2]                    │
-│   VLAN 10,20         VLAN 30,40                     │
-│   ┌───┴───┐         ┌───┴───┐                       │
-│ [Acc1] [Acc2]    [Acc3] [Acc4]                      │
-│  PC1-10 PC11-20  PC21-30 PC31-40                    │
-└─────────────────────────────────────────────────────┘`,
-    steps: [
-      {
-        title: "1. Cisco L2 Switch — VLAN Setup",
-        desc: "Create VLANs, assign access ports, and configure trunk links on Cisco IOS.",
-        code: `! === CISCO IOS L2 SWITCH ===
-Switch> enable
-Switch# configure terminal
-Switch(config)# hostname SW1
-
-! Create VLANs
-SW1(config)# vlan 10
-SW1(config-vlan)# name SALES
-SW1(config)# vlan 20
-SW1(config-vlan)# name IT_DEPT
-SW1(config)# vlan 30
-SW1(config-vlan)# name MANAGEMENT
-SW1(config)# vlan 99
-SW1(config-vlan)# name NATIVE
-
-! Access port assignment
-SW1(config)# interface range fa0/1-10
-SW1(config-if-range)# switchport mode access
-SW1(config-if-range)# switchport access vlan 10
-SW1(config-if-range)# spanning-tree portfast
-SW1(config-if-range)# no shutdown
-
-! Trunk uplink to Core
-SW1(config)# interface GigabitEthernet0/1
-SW1(config-if)# switchport trunk encapsulation dot1q
-SW1(config-if)# switchport mode trunk
-SW1(config-if)# switchport trunk native vlan 99
-SW1(config-if)# switchport trunk allowed vlan 10,20,30,99`,
-      },
-      {
-        title: "2. Cisco L3 Switch — Inter-VLAN Routing",
-        desc: "Enable routing on a Layer 3 switch with SVI interfaces.",
-        code: `! === CISCO L3 SWITCH (Core) ===
-Core(config)# ip routing
-
-! SVI for each VLAN
-Core(config)# interface vlan 10
-Core(config-if)# ip address 192.168.10.1 255.255.255.0
-Core(config-if)# no shutdown
-Core(config-if)# description SALES_GATEWAY
-
-Core(config)# interface vlan 20
-Core(config-if)# ip address 192.168.20.1 255.255.255.0
-Core(config-if)# no shutdown
-Core(config-if)# description IT_GATEWAY
-
-! DHCP pools on L3 switch
-Core(config)# ip dhcp pool SALES_POOL
-Core(dhcp-config)# network 192.168.10.0 255.255.255.0
-Core(dhcp-config)# default-router 192.168.10.1
-Core(dhcp-config)# dns-server 8.8.8.8
-
-Core(config)# ip dhcp excluded-address 192.168.10.1 192.168.10.10
-
-! Verify
-Core# show ip route
-Core# show vlan brief`,
-      },
-      {
-        title: "3. Port Security",
-        desc: "Restrict MAC addresses per port to prevent unauthorized access.",
-        code: `! Enable port security on access ports
-SW1(config)# interface range fa0/1-24
-SW1(config-if-range)# switchport port-security
-SW1(config-if-range)# switchport port-security maximum 2
-SW1(config-if-range)# switchport port-security mac-address sticky
-SW1(config-if-range)# switchport port-security violation restrict
-
-! BPDU Guard (prevent rogue switches)
-SW1(config-if-range)# spanning-tree bpduguard enable
-SW1(config-if-range)# spanning-tree portfast
-
-! Check security status
-SW1# show port-security interface fa0/1
-SW1# show port-security address`,
-      },
-      {
-        title: "4. Juniper EX Switch",
-        desc: "Basic VLAN and trunk configuration on Juniper EX series.",
-        code: `# === JUNIPER EX SWITCH ===
-# Configure VLAN
-set vlans SALES vlan-id 10
-set vlans IT_DEPT vlan-id 20
-set vlans MANAGEMENT vlan-id 30
-
-# Access port
-set interfaces ge-0/0/1 unit 0 family ethernet-switching
-  interface-mode access
-set interfaces ge-0/0/1 unit 0 family ethernet-switching
-  vlan members SALES
-
-# Trunk port
-set interfaces ge-0/0/48 unit 0 family ethernet-switching
-  interface-mode trunk
-set interfaces ge-0/0/48 unit 0 family ethernet-switching
-  vlan members [SALES IT_DEPT MANAGEMENT]
-
-# L3 SVI
-set interfaces irb unit 10 family inet address 192.168.10.1/24
-set vlans SALES l3-interface irb.10
-
-# Commit
-commit check
-commit`,
-      },
-      {
-        title: "5. BDCOM / VSOL OLT Switch",
-        desc: "BDCOM S5750 and VSOL OLT VLAN configuration for ISP use.",
-        code: `! === BDCOM S5750 L3 SWITCH ===
-enable
-configure terminal
-hostname BDCOM-CORE
-
-! Create VLAN
-vlan 10
- name INTERNET_USERS
-vlan 20
- name IPTV_USERS
-vlan 100
- name MANAGEMENT
-
-! OLT Uplink (trunk)
-interface GigabitEthernet 1/1
- switchport mode trunk
- switchport trunk allowed vlan 10,20,100
-
-! PON service VLAN
-interface GigabitEthernet 1/2
- switchport mode access
- switchport access vlan 10
-
-! === VSOL OLT VLAN CONFIG ===
-! PON port binding
-pon-olt 0/1
- service-port 1 vlan 10 gemport 0 multi-service
-   user-vlan 100 tag-transform translate
- service-port 2 vlan 20 gemport 1 multi-service
-   user-vlan 200 tag-transform translate`,
-      },
-      {
-        title: "6. STP & EtherChannel",
-        desc: "Spanning Tree Protocol and link aggregation for redundancy.",
-        code: `! Set spanning tree mode
-SW1(config)# spanning-tree mode rapid-pvst
-SW1(config)# spanning-tree vlan 10 priority 4096
-SW1(config)# spanning-tree vlan 20 priority 8192
-
-! EtherChannel (LACP) — link aggregation
-SW1(config)# interface range GigabitEthernet0/1-2
-SW1(config-if-range)# channel-group 1 mode active
-SW1(config-if-range)# exit
-
-SW1(config)# interface port-channel 1
-SW1(config-if)# switchport trunk encapsulation dot1q
-SW1(config-if)# switchport mode trunk
-SW1(config-if)# switchport trunk allowed vlan all
-
-! Verify
-SW1# show spanning-tree vlan 10
-SW1# show etherchannel summary`,
-      },
-    ],
-  },
-
-  /* ── 3. FIREWALL / ACL ─────────────────────────────── */
-  {
-    id: 3,
-    icon: "ti-shield-lock",
-    emoji: "🔒",
-    accentColor: "#f87171",
-    accentBg: "rgba(239,68,68,0.08)",
-    accentBorder: "rgba(239,68,68,0.25)",
-    category: "SECURITY",
-    title: "FIREWALL / ACL",
-    subtitle: "Cisco ASA, Zone-Based, Extended ACL, DMZ",
-    shortDesc: "Enterprise firewall design with Cisco ASA, zone-based policies, extended ACLs, NAT, DMZ architecture, and intrusion detection for real-world security deployments.",
-    diagram: `
-┌─────────────────────────────────────────────────────┐
-│              FIREWALL DMZ ARCHITECTURE              │
-│                                                     │
-│  [INTERNET] ── (OUTSIDE) ── [ASA FW] ── (INSIDE)   │
-│                                  │                  │
-│                              (DMZ zone)             │
-│                         ┌────────┴────────┐         │
-│                    [Web Server]    [Mail Server]     │
-│                    10.0.1.10       10.0.1.20         │
-│                                                     │
-│  Security Levels:                                   │
-│  INSIDE  = 100  (most trusted)                      │
-│  DMZ     = 50   (semi-trusted)                      │
-│  OUTSIDE = 0    (untrusted)                         │
-└─────────────────────────────────────────────────────┘`,
-    steps: [
-      {
-        title: "1. Cisco ASA Basic Setup",
-        desc: "Initial ASA configuration — interface security levels, zones, and management.",
-        code: `! === CISCO ASA FIREWALL ===
-ASA> enable
-ASA# configure terminal
-ASA(config)# hostname FW1
-
-! Outside interface (ISP)
-FW1(config)# interface GigabitEthernet0/0
-FW1(config-if)# nameif outside
-FW1(config-if)# security-level 0
-FW1(config-if)# ip address 203.0.113.1 255.255.255.252
-FW1(config-if)# no shutdown
-
-! Inside interface (LAN)
-FW1(config)# interface GigabitEthernet0/1
-FW1(config-if)# nameif inside
-FW1(config-if)# security-level 100
-FW1(config-if)# ip address 192.168.1.1 255.255.255.0
-FW1(config-if)# no shutdown
-
-! DMZ interface
-FW1(config)# interface GigabitEthernet0/2
-FW1(config-if)# nameif dmz
-FW1(config-if)# security-level 50
-FW1(config-if)# ip address 10.0.1.1 255.255.255.0
-FW1(config-if)# no shutdown`,
-      },
-      {
-        title: "2. NAT on ASA",
-        desc: "Configure PAT for internet access and static NAT for DMZ servers.",
-        code: `! Dynamic PAT — LAN to Internet
-FW1(config)# object network LAN_NETWORK
-FW1(config-network-object)# subnet 192.168.1.0 255.255.255.0
-FW1(config-network-object)# nat (inside,outside) dynamic interface
-
-! Static NAT — Web Server in DMZ
-FW1(config)# object network WEB_SERVER
-FW1(config-network-object)# host 10.0.1.10
-FW1(config-network-object)# nat (dmz,outside) static 203.0.113.10
-
-! Static NAT — Mail Server
-FW1(config)# object network MAIL_SERVER
-FW1(config-network-object)# host 10.0.1.20
-FW1(config-network-object)# nat (dmz,outside) static 203.0.113.20
-
-! Verify
-FW1# show nat
-FW1# show xlate`,
-      },
-      {
-        title: "3. Extended ACL (Cisco IOS Router)",
-        desc: "Granular traffic filtering with named extended access-control lists.",
-        code: `! === EXTENDED ACL on IOS ROUTER ===
-! Allow HTTP/HTTPS to web server only
-R1(config)# ip access-list extended OUTSIDE_IN
-R1(config-ext-nacl)# remark Allow web traffic to DMZ
-R1(config-ext-nacl)# permit tcp any host 203.0.113.10 eq 80
-R1(config-ext-nacl)# permit tcp any host 203.0.113.10 eq 443
-R1(config-ext-nacl)# permit tcp any host 203.0.113.20 eq 25
-R1(config-ext-nacl)# permit tcp any host 203.0.113.20 eq 587
-R1(config-ext-nacl)# deny ip any any log
-
-! Allow LAN to internet
-R1(config)# ip access-list extended INSIDE_OUT
-R1(config-ext-nacl)# permit ip 192.168.0.0 0.0.255.255 any
-R1(config-ext-nacl)# deny ip any any log
-
-! Apply to interfaces
-R1(config)# interface Gi0/0
-R1(config-if)# ip access-group OUTSIDE_IN in
-R1(config)# interface Gi0/1
-R1(config-if)# ip access-group INSIDE_OUT in
-
-! Verify
-R1# show ip access-lists`,
-      },
-      {
-        title: "4. Zone-Based Firewall (ZBF)",
-        desc: "Modern IOS zone-based firewall replacing classic ACLs with policy maps.",
-        code: `! Define zones
-R1(config)# zone security INSIDE
-R1(config)# zone security OUTSIDE
-R1(config)# zone security DMZ
-
-! Class-map for HTTP traffic
-R1(config)# class-map type inspect match-any HTTP_APPS
-R1(config-cmap)# match protocol http
-R1(config-cmap)# match protocol https
-R1(config-cmap)# match protocol dns
-
-! Policy-map INSIDE → OUTSIDE
-R1(config)# policy-map type inspect IN_TO_OUT
-R1(config-pmap)# class HTTP_APPS
-R1(config-pmap-c)# inspect
-
-! Zone-pair — apply policy
-R1(config)# zone-pair security IN_OUT
-  source INSIDE destination OUTSIDE
-R1(config-sec-zone-pair)# service-policy type inspect IN_TO_OUT
-
-! Assign interfaces to zones
-R1(config)# interface Gi0/0
-R1(config-if)# zone-member security OUTSIDE
-R1(config)# interface Gi0/1
-R1(config-if)# zone-member security INSIDE`,
-      },
-      {
-        title: "5. ASA Access Rules (ASDM-style CLI)",
-        desc: "Define granular access control rules between ASA security zones.",
-        code: `! Allow INSIDE → OUTSIDE (already allowed by security level)
-! Restrict DMZ → INSIDE (DMZ cannot initiate to LAN)
-FW1(config)# access-list DMZ_TO_IN extended deny ip
-  10.0.1.0 255.255.255.0 192.168.1.0 255.255.255.0
-FW1(config)# access-list DMZ_TO_IN extended permit ip any any
-FW1(config)# access-group DMZ_TO_IN in interface dmz
-
-! Allow OUTSIDE → DMZ specific services
-FW1(config)# access-list OUT_TO_DMZ extended permit tcp
-  any host 10.0.1.10 eq 80
-FW1(config)# access-list OUT_TO_DMZ extended permit tcp
-  any host 10.0.1.10 eq 443
-FW1(config)# access-list OUT_TO_DMZ extended deny ip any any log
-FW1(config)# access-group OUT_TO_DMZ in interface outside
-
-! Syslog
-FW1(config)# logging enable
-FW1(config)# logging host inside 192.168.1.100
-FW1(config)# logging trap warnings`,
-      },
-      {
-        title: "6. Intrusion Prevention (IPS/IDS)",
-        desc: "Configure Cisco IOS IPS for signature-based threat detection.",
-        code: `! Enable IPS on router
-R1(config)# ip ips name EDGE_IPS
-
-! Create IPS rule for inbound traffic
-R1(config)# ip ips name EDGE_IPS list EDGE_ACL
-
-! Assign to interface
-R1(config)# interface Gi0/0
-R1(config-if)# ip ips EDGE_IPS in
-
-! Configure IPS signatures
-R1(config)# ip ips signature-definition
-R1(config-sigdef)# signature 2004 0
-R1(config-sig)# status
-R1(config-sig-status)# retired false
-R1(config-sig-status)# enabled true
-R1(config-sig)# engine atomic-ip
-R1(config-sig-ete)# event-action produce-alert
-R1(config-sig-ete)# event-action deny-packet-inline
-
-! Verify
-R1# show ip ips all
-R1# show ip ips statistics`,
-      },
-    ],
-  },
-
-  /* ── 4. MIKROTIK ───────────────────────────────────── */
-  {
-    id: 4,
-    icon: "ti-server",
-    emoji: "⚙️",
-    accentColor: "#00ff88",
-    accentBg: "rgba(0,255,136,0.08)",
-    accentBorder: "rgba(0,255,136,0.25)",
-    category: "MIKROTIK",
-    title: "MIKROTIK",
-    subtitle: "RouterOS — ISP Setup, VLAN, Firewall, Hotspot",
-    shortDesc: "Full Mikrotik RouterOS configuration for real ISP deployments — PPPoE server, DHCP, firewall, bandwidth management, hotspot, and MTCNA/MTCRE level configs.",
-    diagram: `
-┌─────────────────────────────────────────────────────┐
-│             MIKROTIK ISP TOPOLOGY                   │
-│                                                     │
-│  [OLT/Fiber] ── ether1 [MikroTik RB4011] ether2 ── │
-│                          (RouterOS 7.x)             │
-│                         ┌───────┴────────┐          │
-│                  [ether3-VLAN10]  [ether4-VLAN20]   │
-│                  PPPoE Clients    Corporate LAN      │
-│                  192.168.10.0/24  10.10.10.0/24     │
-│                                                     │
-│  Hotspot ── wlan1 (2.4G/5G AP)                      │
-│  Queue Tree for bandwidth per user                  │
-└─────────────────────────────────────────────────────┘`,
-    steps: [
-      {
-        title: "1. Initial Setup & IP Address",
-        desc: "Factory reset, set identity, configure WAN and LAN interfaces.",
-        code: `# === MIKROTIK INITIAL SETUP (CLI / Terminal) ===
-
-# Set identity
-/system identity set name=MK-ISP-01
-
-# WAN Interface (from ISP/OLT)
-/ip address add address=203.0.113.2/30
-  interface=ether1 comment="WAN_ISP"
-
-# LAN Interface
-/ip address add address=192.168.1.1/24
-  interface=ether2 comment="LAN_GATEWAY"
-
-# DNS
-/ip dns set servers=8.8.8.8,1.1.1.1
-  allow-remote-requests=yes
-
-# Default route
-/ip route add dst-address=0.0.0.0/0
-  gateway=203.0.113.1 comment="DEFAULT_ROUTE"
-
-# NTP
-/system ntp client set enabled=yes
-  server-dns-names=time.cloudflare.com`,
-      },
-      {
-        title: "2. PPPoE Server (ISP User Auth)",
-        desc: "Setup PPPoE server for subscriber authentication — used in real ISP deployments.",
-        code: `# === PPPoE SERVER SETUP ===
-
-# Create IP Pool for PPPoE clients
-/ip pool add name=pppoe-pool
-  ranges=10.10.10.2-10.10.10.254
-
-# PPP Profile
-/ppp profile add name=ISP_USERS
-  local-address=10.10.10.1
-  remote-address=pppoe-pool
-  dns-server=8.8.8.8,1.1.1.1
-  rate-limit="10M/10M"
-  use-compression=no
-  use-encryption=no
-
-# PPPoE Server on interface
-/interface pppoe-server server add
-  service-name=ISP_PPPoE
-  interface=ether2
-  default-profile=ISP_USERS
-  enabled=yes
-  one-session-per-host=yes
-
-# Add user (subscriber)
-/ppp secret add name=user01
-  password=pass123
-  service=pppoe
-  profile=ISP_USERS
-  comment="Customer_01"`,
-      },
-      {
-        title: "3. DHCP Server",
-        desc: "Configure DHCP pools for automatic IP assignment per VLAN.",
-        code: `# === DHCP SERVER ===
-
-# Create IP Pool
-/ip pool add name=dhcp-lan
-  ranges=192.168.1.100-192.168.1.200
-
-/ip pool add name=dhcp-vlan10
-  ranges=192.168.10.100-192.168.10.200
-
-# DHCP Server for LAN
-/ip dhcp-server add name=DHCP_LAN
-  interface=ether2
-  address-pool=dhcp-lan
-  lease-time=12h
-  disabled=no
-
-/ip dhcp-server network add
-  address=192.168.1.0/24
-  gateway=192.168.1.1
-  dns-server=8.8.8.8,1.1.1.1
-  comment="LAN_NETWORK"
-
-# DHCP Server for VLAN 10
-/ip dhcp-server add name=DHCP_VLAN10
-  interface=ether3
-  address-pool=dhcp-vlan10
-  lease-time=24h
-  disabled=no
-
-/ip dhcp-server network add
-  address=192.168.10.0/24
-  gateway=192.168.10.1
-  dns-server=8.8.8.8`,
-      },
-      {
-        title: "4. Firewall Rules",
-        desc: "Essential firewall chain rules to protect the router and LAN from external threats.",
-        code: `# === MIKROTIK FIREWALL ===
-
-# Input chain — protect router itself
-/ip firewall filter add chain=input
-  action=accept connection-state=established,related
-  comment="Accept established"
-
-/ip firewall filter add chain=input
-  action=accept protocol=icmp in-interface=ether2
-  comment="Allow ping from LAN"
-
-/ip firewall filter add chain=input
-  action=accept protocol=tcp dst-port=22,8291
-  in-interface=ether2
-  comment="Allow SSH & Winbox from LAN"
-
-/ip firewall filter add chain=input
-  action=drop in-interface=ether1
-  comment="DROP all from WAN"
-
-# Forward chain — protect LAN
-/ip firewall filter add chain=forward
-  action=accept connection-state=established,related
-
-/ip firewall filter add chain=forward
-  action=drop connection-state=invalid
-
-# NAT — masquerade for internet
-/ip firewall nat add chain=srcnat
-  action=masquerade out-interface=ether1
-  comment="Internet NAT"`,
-      },
-      {
-        title: "5. Queue Tree (Bandwidth Management)",
-        desc: "Per-user bandwidth limiting with burst — real ISP traffic shaping.",
-        code: `# === QUEUE TREE / SIMPLE QUEUE ===
-
-# Simple Queue — per user limit
-/queue simple add name=User_01
-  target=192.168.1.10/32
-  max-limit=10M/10M
-  burst-limit=15M/15M
-  burst-threshold=7M/7M
-  burst-time=15s/15s
-  comment="Customer_01_10Mbps"
-
-# Queue Tree — global bandwidth control
-/queue type add name=pcq-download
-  kind=pcq pcq-rate=5M pcq-classifier=dst-address
-
-/queue type add name=pcq-upload
-  kind=pcq pcq-rate=2M pcq-classifier=src-address
-
-/queue tree add name=DOWNLOAD
-  parent=global packet-mark=download
-  queue=pcq-download max-limit=100M
-
-/queue tree add name=UPLOAD
-  parent=global packet-mark=upload
-  queue=pcq-upload max-limit=50M`,
-      },
-      {
-        title: "6. Hotspot Setup (WiFi Users)",
-        desc: "Configure Mikrotik Hotspot for captive portal authentication on WiFi network.",
-        code: `# === HOTSPOT SETUP ===
-
-# Hotspot on wlan1
-/ip hotspot setup
-  hotspot interface: wlan1
-  local address: 172.16.0.1/24
-  masquerade network: yes
-  address pool: 172.16.0.2-172.16.0.254
-  DNS name: hotspot.khairulhub.com
-
-# Hotspot user profile
-/ip hotspot user profile add name=FREE_1HR
-  shared-users=1
-  session-timeout=1h
-  idle-timeout=15m
-  rate-limit="2M/2M"
-
-/ip hotspot user profile add name=PAID_5MB
-  shared-users=1
-  rate-limit="5M/5M"
-  validity=1d
-
-# Add hotspot users
-/ip hotspot user add name=guest01
-  password=guest123
-  profile=FREE_1HR
-  comment="Free trial user"
-
-# Verify
-/ip hotspot active print
-/ip hotspot host print`,
-      },
-    ],
-  },
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -807,20 +198,7 @@ function CopyButton({ text }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   NETWORK MODAL
-═══════════════════════════════════════════════════════ */
-// function NetworkModal({ topic: t, onClose }) {
-//   const [activeStep, setActiveStep] = useState(0);
 
-//   useEffect(() => {
-//     setActiveStep(0);
-//     const handler = (e) => { if (e.key === "Escape") onClose(); };
-//     window.addEventListener("keydown", handler);
-//     return () => window.removeEventListener("keydown", handler);
-//   }, [t, onClose]);
-
-//   const step = t.steps[activeStep];
 
 function NetworkModal({ topic: t, onClose }) {
   const [activeStep, setActiveStep] = useState(0);
@@ -1243,18 +621,56 @@ function NetworkModal({ topic: t, onClose }) {
    NETWORKING SECTION
 ═══════════════════════════════════════════════════════ */
  const Networking = () => {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected]   = useState(null);
+  const [topics, setTopics]       = useState([]);    // ← DB থেকে আসবে
+  const [skills, setSkills]       = useState(NET_SKILLS); // fallback to hardcoded
+  const [loading, setLoading]     = useState(true);
   const gridRef = useRef(null);
 
+  // ─── Fetch from DB ───────────────────────────────────────
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getNetworks();
+        if (res.success && res.data.length > 0) {
+          setTopics(res.data);
+        } else {
+          // fallback: show 1 default topic from hardcoded array
+          setTopics([topics_fallback[0]]);
+        }
+      } catch {
+        // DB connect না হলে hardcoded 1st topic দেখাবে
+        setTopics([topics_fallback[0]]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // ─── Intersection observer for fade-in ───────────────────
+  useEffect(() => {
+    if (loading) return;
     const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("fade-visible"); }),
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) e.target.classList.add("fade-visible");
+      }),
       { threshold: 0.1 }
     );
     const cards = gridRef.current?.querySelectorAll(".net-card");
     cards?.forEach((c) => obs.observe(c));
     return () => obs.disconnect();
-  }, []);
+  }, [loading, topics]);
+
+  if (loading) {
+    return (
+      <section id="networking" style={{ background: "#04080f", padding: "80px 0", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ color: "#00e5ff", fontFamily: "'Share Tech Mono',monospace", fontSize: 13, letterSpacing: 3 }}>
+          LOADING NETWORK DATA...
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -1273,11 +689,11 @@ function NetworkModal({ topic: t, onClose }) {
           </div>
           <div style={{ width: 60, height: 2, background: "linear-gradient(90deg,#00e5ff,transparent)", marginBottom: 36 }} />
 
-          {/* top: 4 topic cards */}
+          {/* top: topic cards */}
           <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {topics.map((t, i) => (
               <div
-                key={t.id}
+                key={t._id || t.id}
                 className="net-card fade-in rounded-xl cursor-pointer transition-all duration-300 flex flex-col overflow-hidden"
                 style={{
                   background: "#0c1422",
@@ -1300,7 +716,6 @@ function NetworkModal({ topic: t, onClose }) {
                 <div style={{ height: 3, background: `linear-gradient(90deg,transparent,${t.accentColor},transparent)` }} />
 
                 <div style={{ padding: 20, flex: 1, display: "flex", flexDirection: "column" }}>
-                  {/* icon */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center justify-center text-2xl rounded-xl"
                       style={{ width: 50, height: 50, background: t.accentBg, border: `1px solid ${t.accentBorder}` }}>
@@ -1312,7 +727,6 @@ function NetworkModal({ topic: t, onClose }) {
                     </span>
                   </div>
 
-                  {/* title */}
                   <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: 13, fontWeight: 700, color: "#c8e8f8", letterSpacing: 2, marginBottom: 4 }}>
                     {t.title}
                   </div>
@@ -1323,10 +737,8 @@ function NetworkModal({ topic: t, onClose }) {
                     {t.shortDesc}
                   </p>
 
-                  {/* divider */}
                   <div style={{ height: 1, background: "rgba(0,229,255,0.06)", marginBottom: 10 }} />
 
-                  {/* steps count + click hint */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       {t.steps.map((_, si) => (
@@ -1352,7 +764,7 @@ function NetworkModal({ topic: t, onClose }) {
               // NETWORK.SKILLS
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {NET_SKILLS.map((s) => (
+              {skills.map((s) => (
                 <div key={s.name} className="rounded-lg p-3"
                   style={{ background: "#080e1a", border: "1px solid rgba(0,229,255,0.06)" }}>
                   <div className="flex justify-between mb-2">
@@ -1375,6 +787,6 @@ function NetworkModal({ topic: t, onClose }) {
       </section>
     </>
   );
-}
+};
 
 export default Networking;

@@ -279,6 +279,43 @@ export const toggleCoding = async (id) => {
 };
 
 
+// network -------------------------
+
+export const getNetworks = async () => {
+  const { data } = await API.get("/networks");
+  return data;
+};
+
+export const getAdminNetworks = async () => {
+  const { data } = await API.get("/networks/admin/all");
+  return data;
+};
+
+export const getNetworkById = async (id) => {
+  const { data } = await API.get(`/networks/${id}`);
+  return data;
+};
+
+export const createNetwork = async (networkData) => {
+  const { data } = await API.post("/networks", networkData);
+  return data;
+};
+
+export const updateNetwork = async (id, networkData) => {
+  const { data } = await API.put(`/networks/${id}`, networkData);
+  return data;
+};
+
+export const deleteNetwork = async (id) => {
+  const { data } = await API.delete(`/networks/${id}`);
+  return data;
+};
+
+export const toggleNetwork = async (id) => {
+  const { data } = await API.patch(`/networks/${id}/toggle`);
+  return data;
+};
+
 
 
 export default API;

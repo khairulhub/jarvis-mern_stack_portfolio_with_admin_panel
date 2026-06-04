@@ -22,6 +22,7 @@ app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/hero",   require("./routes/heroRoutes"));
 app.use("/api/works",  require("./routes/workRoutes"));
 app.use("/api/codings", require("./routes/codingRoutes"));
+app.use("/api/networks", require("./routes/networkRoutes"));
 app.use("/api/services",  require("./routes/Serviceroutes"));
 
 app.get("/api/health", (req, res) => {
@@ -92,6 +93,19 @@ const seedCodings = async () => {
   console.log(`✅ Codings seeded — ${data.length} entries inserted.`);
 };
 
+// ─────────────────────────────────────────────────────────────
+// Seed function যোগ করো (seedCodings এর পরে):
+// ─────────────────────────────────────────────────────────────
+
+const seedNetworks = async () => {
+  const Network = require("./models/Network");
+  const count = await Network.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Networks already seeded (${count}) — skip.`);
+  const data = require("./data/network.seed.json");
+  await Network.insertMany(data);
+  console.log(`✅ Networks seeded — ${data.length} topics inserted.`);
+};
+
 
 
 
@@ -108,6 +122,7 @@ mongoose
     await seedServices();
     await seedWorks();
     await seedCodings();
+    await seedNetworks();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {

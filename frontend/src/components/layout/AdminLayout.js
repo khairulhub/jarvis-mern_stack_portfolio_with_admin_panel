@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   HiOutlineHome, HiOutlineDocumentText, HiOutlineUsers,
   HiOutlineLogout, HiOutlineMenu, HiOutlineX, HiOutlineCog, HiOutlinePhotograph,
-  HiOutlineCode, HiOutlineBriefcase, HiOutlineCollection,
+  HiOutlineCode, HiOutlineBriefcase, HiOutlineCollection,HiOutlineGlobe,
 } from "react-icons/hi";
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
 { path: "/admin/experiences", icon: HiOutlineBriefcase,    label: "Experiences"  }, //new
   { path: "/admin/services", icon: HiOutlineCollection, label: "Services" }, //new
   { path: "/admin/codings",     icon: HiOutlineCode,         label: "Coding Ref"   }, //new
+   { path: "/admin/networks",    icon: HiOutlineGlobe,        label: "Networking"  },  // ← NEW
   { path: "/admin/blogs", icon: HiOutlineDocumentText, label: "Blogs" },
   { path: "/admin/team", icon: HiOutlineUsers, label: "Team" },
  

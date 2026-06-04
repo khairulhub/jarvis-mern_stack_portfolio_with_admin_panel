@@ -1,0 +1,151 @@
+[
+  {
+    "order": 1,
+    "icon": "ti-router",
+    "emoji": "🔀",
+    "accentColor": "#00e5ff",
+    "accentBg": "rgba(0,229,255,0.08)",
+    "accentBorder": "rgba(0,229,255,0.25)",
+    "category": "CISCO",
+    "title": "ROUTER CONFIG",
+    "subtitle": "Basic to Advanced — VLAN, OSPF, Traffic Control",
+    "shortDesc": "Complete router configuration from hostname setup to advanced OSPF, VLAN routing, ACL, and traffic shaping in real-life ISP/enterprise deployments.",
+    "diagram": "┌─────────────────────────────────────────────────────┐\n│              ENTERPRISE ROUTER TOPOLOGY             │\n│                                                     │\n│  [Internet/ISP]──────[WAN Gi0/0]                   │\n│                           │                         │\n│                      [ROUTER R1]                    │\n│                      192.168.0.1                    │\n│                    ┌──────┴──────┐                  │\n│               [LAN Gi0/1]  [LAN Gi0/2]              │\n│               192.168.1.0  192.168.2.0              │\n│                    │             │                  │\n│             [SALES VLAN10] [IT VLAN20]              │\n│              .1-.50           .1-.50                │\n└─────────────────────────────────────────────────────┘",
+    "steps": [
+      {
+        "title": "1. Basic Setup",
+        "desc": "Set hostname, disable DNS lookup, configure enable secret and console passwords.",
+        "code": "Router> enable\nRouter# configure terminal\nRouter(config)# hostname R1\nR1(config)# no ip domain-lookup\nR1(config)# enable secret Cisco123\nR1(config)# line console 0\nR1(config-line)# password Cisco123\nR1(config-line)# login\nR1(config-line)# logging synchronous\nR1(config-line)# exit\nR1(config)# service password-encryption\nR1(config)# banner motd #AUTHORIZED ACCESS ONLY#"
+      },
+      {
+        "title": "2. Interface Configuration",
+        "desc": "Configure WAN and LAN interfaces with IP addresses.",
+        "code": "! WAN Interface (to ISP)\nR1(config)# interface GigabitEthernet0/0\nR1(config-if)# description WAN_TO_ISP\nR1(config-if)# ip address 203.0.113.2 255.255.255.252\nR1(config-if)# no shutdown\n\n! LAN Interface\nR1(config)# interface GigabitEthernet0/1\nR1(config-if)# description LAN_SALES\nR1(config-if)# ip address 192.168.1.1 255.255.255.0\nR1(config-if)# no shutdown\n\n! Sub-interface for VLAN routing\nR1(config)# interface GigabitEthernet0/1.10\nR1(config-subif)# encapsulation dot1Q 10\nR1(config-subif)# ip address 192.168.10.1 255.255.255.0\n\nR1(config)# interface GigabitEthernet0/1.20\nR1(config-subif)# encapsulation dot1Q 20\nR1(config-subif)# ip address 192.168.20.1 255.255.255.0"
+      },
+      {
+        "title": "3. OSPF Routing",
+        "desc": "Configure OSPF dynamic routing protocol for multi-area deployment.",
+        "code": "! Enable OSPF process\nR1(config)# router ospf 1\nR1(config-router)# router-id 1.1.1.1\nR1(config-router)# network 192.168.1.0 0.0.0.255 area 0\nR1(config-router)# network 192.168.2.0 0.0.0.255 area 0\nR1(config-router)# network 203.0.113.0 0.0.0.3 area 0\nR1(config-router)# passive-interface GigabitEthernet0/1\nR1(config-router)# default-information originate\n\n! Verification\nR1# show ip ospf neighbor\nR1# show ip route ospf\nR1# show ip protocols"
+      },
+      {
+        "title": "4. NAT / PAT (Internet Access)",
+        "desc": "Configure NAT overload (PAT) so LAN users can access internet.",
+        "code": "! Define inside/outside\nR1(config)# interface Gi0/0\nR1(config-if)# ip nat outside\n\nR1(config)# interface Gi0/1\nR1(config-if)# ip nat inside\n\n! Create ACL for NAT\nR1(config)# ip access-list standard LAN_NAT\nR1(config-std-nacl)# permit 192.168.0.0 0.0.255.255\n\n! Enable PAT\nR1(config)# ip nat inside source list LAN_NAT interface GigabitEthernet0/0 overload\n\n! Verify\nR1# show ip nat translations\nR1# show ip nat statistics"
+      },
+      {
+        "title": "5. Traffic Control / QoS",
+        "desc": "Policy-based routing and traffic shaping for bandwidth management.",
+        "code": "! Create class-map for VoIP traffic\nR1(config)# class-map match-all VOIP\nR1(config-cmap)# match protocol rtp\n\n! Policy-map with priority queue\nR1(config)# policy-map QOS_POLICY\nR1(config-pmap)# class VOIP\nR1(config-pmap-c)# priority 512\nR1(config-pmap)# class class-default\nR1(config-pmap-c)# fair-queue\n\n! Apply to interface\nR1(config)# interface Gi0/0\nR1(config-if)# service-policy output QOS_POLICY"
+      },
+      {
+        "title": "6. Static Routes & Default Route",
+        "desc": "Add static and default routes for basic routing needs.",
+        "code": "! Default route to ISP\nR1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1\n\n! Static route to remote network\nR1(config)# ip route 10.0.0.0 255.0.0.0 192.168.1.254\n\n! Floating static (backup route)\nR1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.5 5\n\n! Verify\nR1# show ip route\nR1# ping 8.8.8.8 source 192.168.1.1"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 2,
+    "icon": "ti-switch-horizontal",
+    "emoji": "🔁",
+    "accentColor": "#a855f7",
+    "accentBg": "rgba(168,85,247,0.08)",
+    "accentBorder": "rgba(168,85,247,0.25)",
+    "category": "L2/L3",
+    "title": "SWITCH CONFIG",
+    "subtitle": "Cisco, Juniper, VSOL, BDCOM — L2 & L3",
+    "shortDesc": "Layer 2 & Layer 3 switch configuration for VLANs, trunking, STP, port security, and inter-VLAN routing on Cisco, Juniper, VSOL OLT, and BDCOM switches.",
+    "diagram": "┌─────────────────────────────────────────────────────┐\n│               SWITCH HIERARCHY DESIGN               │\n│                                                     │\n│         [Core L3 Switch] ── 192.168.0.0/16          │\n│          Cisco C3750 / BDCOM S5750                  │\n│         ┌────────┴────────┐                         │\n│   [Dist SW-1]        [Dist SW-2]                    │\n│   VLAN 10,20         VLAN 30,40                     │\n│   ┌───┴───┐         ┌───┴───┐                       │\n│ [Acc1] [Acc2]    [Acc3] [Acc4]                      │\n│  PC1-10 PC11-20  PC21-30 PC31-40                    │\n└─────────────────────────────────────────────────────┘",
+    "steps": [
+      {
+        "title": "1. Cisco L2 Switch — VLAN Setup",
+        "desc": "Create VLANs, assign access ports, and configure trunk links on Cisco IOS.",
+        "code": "Switch> enable\nSwitch# configure terminal\nSwitch(config)# hostname SW1\n\n! Create VLANs\nSW1(config)# vlan 10\nSW1(config-vlan)# name SALES\nSW1(config)# vlan 20\nSW1(config-vlan)# name IT_DEPT\nSW1(config)# vlan 30\nSW1(config-vlan)# name MANAGEMENT\n\n! Access port assignment\nSW1(config)# interface range fa0/1-10\nSW1(config-if-range)# switchport mode access\nSW1(config-if-range)# switchport access vlan 10\nSW1(config-if-range)# spanning-tree portfast\n\n! Trunk port to router\nSW1(config)# interface Gi0/1\nSW1(config-if)# switchport mode trunk\nSW1(config-if)# switchport trunk allowed vlan 10,20,30,99\nSW1(config-if)# switchport trunk native vlan 99"
+      },
+      {
+        "title": "2. Cisco L3 Switch — Inter-VLAN Routing",
+        "desc": "Enable IP routing on L3 switch and create SVIs for inter-VLAN communication.",
+        "code": "! Enable IP routing\nCore(config)# ip routing\n\n! Create SVIs\nCore(config)# interface vlan 10\nCore(config-if)# ip address 192.168.10.1 255.255.255.0\nCore(config-if)# no shutdown\n\nCore(config)# interface vlan 20\nCore(config-if)# ip address 192.168.20.1 255.255.255.0\nCore(config-if)# no shutdown\n\nCore(config)# interface vlan 30\nCore(config-if)# ip address 192.168.30.1 255.255.255.0\nCore(config-if)# no shutdown\n\n! Default route to upstream router\nCore(config)# ip route 0.0.0.0 0.0.0.0 192.168.1.254\n\n! Verify\nCore# show ip route\nCore# show vlan brief"
+      },
+      {
+        "title": "3. Port Security",
+        "desc": "Restrict switch ports to specific MAC addresses to prevent unauthorized access.",
+        "code": "! Enable port security\nSW1(config)# interface fa0/5\nSW1(config-if)# switchport mode access\nSW1(config-if)# switchport port-security\nSW1(config-if)# switchport port-security maximum 2\nSW1(config-if)# switchport port-security mac-address sticky\nSW1(config-if)# switchport port-security violation restrict\n\n! Verify\nSW1# show port-security interface fa0/5\nSW1# show port-security address"
+      },
+      {
+        "title": "4. STP & EtherChannel",
+        "desc": "Configure Spanning Tree Protocol and EtherChannel for redundancy and load balancing.",
+        "code": "! Set STP mode\nSW1(config)# spanning-tree mode rapid-pvst\nSW1(config)# spanning-tree vlan 10 priority 4096\nSW1(config)# spanning-tree vlan 20 priority 8192\n\n! EtherChannel (LACP)\nSW1(config)# interface range gi0/1-2\nSW1(config-if-range)# channel-group 1 mode active\nSW1(config-if-range)# switchport mode trunk\n\n! Verify\nSW1# show spanning-tree vlan 10\nSW1# show etherchannel summary"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 3,
+    "icon": "ti-shield-lock",
+    "emoji": "🔒",
+    "accentColor": "#f97316",
+    "accentBg": "rgba(249,115,22,0.08)",
+    "accentBorder": "rgba(249,115,22,0.25)",
+    "category": "SECURITY",
+    "title": "FIREWALL / ACL",
+    "subtitle": "Cisco ASA, Zone-Based, Extended ACL, DMZ",
+    "shortDesc": "Firewall and ACL configurations for network security — Cisco ASA, Zone-Based Firewall, extended ACL, NAT on ASA, DMZ setup, and intrusion prevention.",
+    "diagram": "┌─────────────────────────────────────────────────────┐\n│              FIREWALL / DMZ TOPOLOGY                │\n│                                                     │\n│  [Internet] ─── [ASA Outside] ─── [DMZ Zone]       │\n│                                    ├── WebServer    │\n│                                    └── MailServer   │\n│              [ASA Inside] ─── [LAN 192.168.1.0/24]  │\n│                               ├── Users             │\n│                               └── Servers          │\n└─────────────────────────────────────────────────────┘",
+    "steps": [
+      {
+        "title": "1. Cisco ASA Basic Setup",
+        "desc": "Configure Cisco ASA firewall with inside/outside/DMZ interfaces.",
+        "code": "! === CISCO ASA FIREWALL ===\nASA> enable\nASA# configure terminal\nASA(config)# hostname FW1\n\n! Interface configuration\nFW1(config)# interface GigabitEthernet0/0\nFW1(config-if)# nameif outside\nFW1(config-if)# security-level 0\nFW1(config-if)# ip address 203.0.113.1 255.255.255.252\nFW1(config-if)# no shutdown\n\nFW1(config)# interface GigabitEthernet0/1\nFW1(config-if)# nameif inside\nFW1(config-if)# security-level 100\nFW1(config-if)# ip address 192.168.1.1 255.255.255.0\nFW1(config-if)# no shutdown\n\nFW1(config)# interface GigabitEthernet0/2\nFW1(config-if)# nameif dmz\nFW1(config-if)# security-level 50\nFW1(config-if)# ip address 10.0.1.1 255.255.255.0\nFW1(config-if)# no shutdown"
+      },
+      {
+        "title": "2. Extended ACL (Cisco IOS Router)",
+        "desc": "Create extended ACLs to filter traffic by source, destination, and protocol.",
+        "code": "! Extended ACL — block telnet, allow HTTP/HTTPS\nR1(config)# ip access-list extended INTERNET_IN\nR1(config-ext-nacl)# permit tcp any 192.168.1.0 0.0.0.255 eq 80\nR1(config-ext-nacl)# permit tcp any 192.168.1.0 0.0.0.255 eq 443\nR1(config-ext-nacl)# deny tcp any any eq 23\nR1(config-ext-nacl)# permit ip any any\n\n! Apply to interface\nR1(config)# interface Gi0/0\nR1(config-if)# ip access-group INTERNET_IN in\n\n! Verify\nR1# show ip access-lists\nR1# show run | section access-list"
+      },
+      {
+        "title": "3. Zone-Based Firewall (ZBF)",
+        "desc": "Configure zone-based policy firewall on Cisco IOS router.",
+        "code": "! Create zones\nR1(config)# zone security INSIDE\nR1(config)# zone security OUTSIDE\n\n! Class-map to match traffic\nR1(config)# class-map type inspect match-any ALLOWED_TRAFFIC\nR1(config-cmap)# match protocol http\nR1(config-cmap)# match protocol https\nR1(config-cmap)# match protocol dns\n\n! Policy-map\nR1(config)# policy-map type inspect INSIDE_TO_OUTSIDE\nR1(config-pmap)# class ALLOWED_TRAFFIC\nR1(config-pmap-c)# inspect\nR1(config-pmap)# class class-default\nR1(config-pmap-c)# drop\n\n! Zone-pair\nR1(config)# zone-pair security IN_TO_OUT source INSIDE destination OUTSIDE\nR1(config-sec-zone-pair)# service-policy type inspect INSIDE_TO_OUTSIDE\n\n! Assign interfaces to zones\nR1(config)# interface Gi0/1\nR1(config-if)# zone-member security INSIDE\nR1(config)# interface Gi0/0\nR1(config-if)# zone-member security OUTSIDE"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 4,
+    "icon": "ti-server",
+    "emoji": "⚙️",
+    "accentColor": "#22c55e",
+    "accentBg": "rgba(34,197,94,0.08)",
+    "accentBorder": "rgba(34,197,94,0.25)",
+    "category": "MIKROTIK",
+    "title": "MIKROTIK CONFIG",
+    "subtitle": "RouterOS — DHCP, NAT, Hotspot, Bandwidth Management",
+    "shortDesc": "MikroTik RouterOS configuration covering DHCP server, NAT masquerade, simple queue for bandwidth control, hotspot setup, VLAN, and PPPoE server for ISP deployment.",
+    "diagram": "┌─────────────────────────────────────────────────────┐\n│              MIKROTIK ISP TOPOLOGY                  │\n│                                                     │\n│  [Fiber/WAN] ─── [ether1 WAN] ─── MikroTik CCR     │\n│                                         │           │\n│                             [bridge/ether2]         │\n│                          ┌──────┴──────┐            │\n│                      [AP WiFi]    [Switch]          │\n│                      Hotspot     192.168.88.0/24    │\n└─────────────────────────────────────────────────────┘",
+    "steps": [
+      {
+        "title": "1. Basic Setup & NAT",
+        "desc": "Configure MikroTik with WAN interface, IP address, and NAT masquerade for internet sharing.",
+        "code": "# Set interface names\n/interface set ether1 name=WAN\n/interface set ether2 name=LAN\n\n# WAN IP (DHCP from ISP)\n/ip dhcp-client add interface=WAN disabled=no\n\n# LAN IP\n/ip address add address=192.168.88.1/24 interface=LAN\n\n# DHCP Server for LAN\n/ip pool add name=dhcp_pool ranges=192.168.88.10-192.168.88.254\n/ip dhcp-server add name=dhcp1 interface=LAN address-pool=dhcp_pool disabled=no\n/ip dhcp-server network add address=192.168.88.0/24 gateway=192.168.88.1 dns-server=8.8.8.8\n\n# NAT Masquerade\n/ip firewall nat add chain=srcnat out-interface=WAN action=masquerade"
+      },
+      {
+        "title": "2. Simple Queue (Bandwidth Limit)",
+        "desc": "Limit upload and download bandwidth per IP or subnet using Simple Queues.",
+        "code": "# Limit single user — 5Mbps down / 2Mbps up\n/queue simple add name=user1 target=192.168.88.10/32 \\\n  max-limit=5M/2M comment=\"User PC - Limited\"\n\n# Limit entire subnet\n/queue simple add name=lan_limit target=192.168.88.0/24 \\\n  max-limit=50M/20M comment=\"LAN Total Bandwidth\"\n\n# Burst for short time\n/queue simple add name=user2 target=192.168.88.11/32 \\\n  max-limit=10M/5M burst-limit=20M/10M burst-threshold=8M/4M burst-time=10s/10s\n\n# Verify\n/queue simple print"
+      },
+      {
+        "title": "3. Hotspot Setup",
+        "desc": "Configure MikroTik Hotspot for captive portal authentication on WiFi network.",
+        "code": "# Setup Hotspot on bridge interface\n/ip hotspot setup\n# Follow wizard:\n# hotspot interface: bridge1\n# local address: 192.168.10.1/24\n# masquerade network: yes\n# address pool: 192.168.10.2-192.168.10.254\n# DNS name: hotspot.local\n\n# Create hotspot users\n/ip hotspot user add name=guest password=guest1234 limit-uptime=2h\n/ip hotspot user add name=staff password=staff@2024 comment=\"Staff account\"\n\n# Hotspot profile settings\n/ip hotspot profile set default idle-timeout=10m \\\n  session-timeout=8h keepalive-timeout=2m"
+      },
+      {
+        "title": "4. VLAN Configuration",
+        "desc": "Configure VLANs on MikroTik for network segmentation.",
+        "code": "# Create VLAN interfaces\n/interface vlan add name=vlan10 vlan-id=10 interface=ether2\n/interface vlan add name=vlan20 vlan-id=20 interface=ether2\n\n# Assign IP to VLANs\n/ip address add address=192.168.10.1/24 interface=vlan10\n/ip address add address=192.168.20.1/24 interface=vlan20\n\n# DHCP for each VLAN\n/ip pool add name=pool_vlan10 ranges=192.168.10.10-192.168.10.200\n/ip dhcp-server add name=dhcp_vlan10 interface=vlan10 address-pool=pool_vlan10 disabled=no\n/ip dhcp-server network add address=192.168.10.0/24 gateway=192.168.10.1 dns-server=8.8.8.8\n\n# Firewall to isolate VLANs\n/ip firewall filter add chain=forward in-interface=vlan10 \\\n  out-interface=vlan20 action=drop comment=\"Block VLAN10 to VLAN20\""
+      }
+    ],
+    "isActive": true
+  }
+]
