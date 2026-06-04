@@ -131,6 +131,73 @@ export const updateHero = async (heroData) => {
   return data;
 };
 
+
+ 
+// ─── Services ─────────────────────────────────────────────────
+export const getPublicServices = async () => {
+  const { data } = await API.get("/services");
+  return data;
+};
+ 
+export const getAdminServices = async () => {
+  const { data } = await API.get("/services/admin/all");
+  return data;
+};
+ 
+export const createService = async (serviceData) => {
+  const { data } = await API.post("/services", serviceData);
+  return data;
+};
+ 
+export const updateService = async (id, serviceData) => {
+  const { data } = await API.put(`/services/${id}`, serviceData);
+  return data;
+};
+ 
+export const deleteService = async (id) => {
+  const { data } = await API.delete(`/services/${id}`);
+  return data;
+};
+ 
+export const toggleService = async (id) => {
+  const { data } = await API.patch(`/services/${id}/toggle`);
+  return data;
+};
+
+
+
+// ─── Experiences ──────────────────────────────────────────────
+export const getExperiences = async () => {
+  const { data } = await API.get("/experiences");
+  return data;
+};
+
+export const getExperienceById = async (id) => {
+  const { data } = await API.get(`/experiences/${id}`);
+  return data;
+};
+
+export const createExperience = async (expData) => {
+  const { data } = await API.post("/experiences", expData);
+  return data;
+};
+
+export const updateExperience = async (id, expData) => {
+  const { data } = await API.put(`/experiences/${id}`, expData);
+  return data;
+};
+
+export const deleteExperience = async (id) => {
+  const { data } = await API.delete(`/experiences/${id}`);
+  return data;
+};
+
+
+
+
+
+
+
 // ─── Works ───────────────────────────────────────────────────
 export const getPublicWorks = async () => {
   const { data } = await API.get("/works");
@@ -161,6 +228,7 @@ export const toggleWork = async (id) => {
   const { data } = await API.patch(`/works/${id}/toggle`);
   return data;
 };
+
 
 
 

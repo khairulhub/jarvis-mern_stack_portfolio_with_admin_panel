@@ -1,0 +1,68 @@
+[
+  {
+    "order": 1,
+    "icon": "ti-brand-react",
+    "title": "MERN STACK DEV",
+    "desc": "Full-stack web development using MongoDB, Express.js, React.js, and Node.js. Building scalable SPAs and REST APIs.",
+    "tags": ["React", "Node.js", "MongoDB", "Express"],
+    "color": "#38bdf8",
+    "colorBg": "rgba(56,189,248,0.08)",
+    "colorBorder": "rgba(56,189,248,0.25)",
+    "isActive": true
+  },
+  {
+    "order": 2,
+    "icon": "ti-brand-php",
+    "title": "PHP / LARAVEL",
+    "desc": "Robust backend development with PHP and Laravel framework. REST APIs, authentication, database design, and more.",
+    "tags": ["Laravel", "MySQL", "Eloquent", "Blade"],
+    "color": "#c084fc",
+    "colorBg": "rgba(168,85,247,0.08)",
+    "colorBorder": "rgba(168,85,247,0.25)",
+    "isActive": true
+  },
+  {
+    "order": 3,
+    "icon": "ti-brand-windows",
+    "title": ".NET DEVELOPMENT",
+    "desc": "Enterprise applications with C# and .NET. Web APIs, MVC applications, Entity Framework, and Azure integration.",
+    "tags": ["C#", "ASP.NET", "EF Core", "Azure"],
+    "color": "#ffa040",
+    "colorBg": "rgba(255,140,0,0.08)",
+    "colorBorder": "rgba(255,140,0,0.25)",
+    "isActive": true
+  },
+  {
+    "order": 4,
+    "icon": "ti-network",
+    "title": "NETWORK DESIGN",
+    "desc": "Enterprise network design and configuration. Router/Switch setup, VLAN segmentation, and network topology planning.",
+    "tags": ["Cisco", "VLAN", "Routing", "Topology"],
+    "color": "#facc15",
+    "colorBg": "rgba(250,204,21,0.08)",
+    "colorBorder": "rgba(250,204,21,0.25)",
+    "isActive": true
+  },
+  {
+    "order": 5,
+    "icon": "ti-shield-lock",
+    "title": "NETWORK SECURITY",
+    "desc": "Firewall configuration, ACL management, VPN setup, and security hardening for enterprise network environments.",
+    "tags": ["Firewall", "ACL", "VPN", "IDS/IPS"],
+    "color": "#f87171",
+    "colorBg": "rgba(239,68,68,0.08)",
+    "colorBorder": "rgba(239,68,68,0.25)",
+    "isActive": true
+  },
+  {
+    "order": 6,
+    "icon": "ti-device-desktop-analytics",
+    "title": "UI/UX DESIGN",
+    "desc": "Modern, responsive UI design with attention to user experience. Figma prototyping to production-ready interfaces.",
+    "tags": ["Figma", "Tailwind", "SCSS", "Responsive"],
+    "color": "#00e5ff",
+    "colorBg": "rgba(0,229,255,0.08)",
+    "colorBorder": "rgba(0,229,255,0.25)",
+    "isActive": true
+  }
+]

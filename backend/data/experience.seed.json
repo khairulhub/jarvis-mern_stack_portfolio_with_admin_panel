@@ -1,0 +1,50 @@
+[
+  {
+    "company": "Edge Tech BD",
+    "designation": "Jr. Executive Admin",
+    "period": "Oct 2025 – Mar 2026",
+    "duration": "6 months",
+    "type": "Full Time",
+    "icon": "ti-building",
+    "color": "#facc15",
+    "colorBg": "rgba(250,204,21,0.08)",
+    "colorBorder": "rgba(250,204,21,0.25)",
+    "location": "Dhaka, Bangladesh",
+    "description": "Handled CCTV surveillance systems, access control setup, and intercom infrastructure for multiple commercial and industrial clients across Dhaka.",
+    "skills": ["CCTV Surveillance", "Access Control", "Intercom System", "IT Support"],
+    "projects": ["Mingle", "CDC Eastern Housing", "Fashion Tex"],
+    "order": 1
+  },
+  {
+    "company": "Code Tree It Ltd",
+    "designation": "Jr. Full Stack Web Developer",
+    "period": "Sep 2024 – Apr 2025",
+    "duration": "8 months",
+    "type": "Full Time",
+    "icon": "ti-code",
+    "color": "#00e5ff",
+    "colorBg": "rgba(0,229,255,0.08)",
+    "colorBorder": "rgba(0,229,255,0.25)",
+    "location": "Dhaka, Bangladesh",
+    "description": "Developed a full-featured Learning Management System (LMS) using Laravel. Responsible for frontend UI, backend API, database design, and deployment.",
+    "skills": ["HTML5", "CSS3", "Bootstrap 5", "PHP", "Laravel"],
+    "projects": ["LMS Software Solution"],
+    "order": 2
+  },
+  {
+    "company": "4Axiz It Ltd",
+    "designation": "Jr. Full Stack Web Developer",
+    "period": "May 2023 – Oct 2023",
+    "duration": "6 months",
+    "type": "Full Time",
+    "icon": "ti-terminal-2",
+    "color": "#a855f7",
+    "colorBg": "rgba(168,85,247,0.08)",
+    "colorBorder": "rgba(168,85,247,0.25)",
+    "location": "Dhaka, Bangladesh",
+    "description": "Built Human Resource Management (HRM) software from scratch. Covered employee records, payroll, attendance tracking, and admin dashboard modules.",
+    "skills": ["HTML5", "CSS3", "Bootstrap 5", "PHP", "Laravel"],
+    "projects": ["HRM Software Solution"],
+    "order": 3
+  }
+]

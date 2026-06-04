@@ -24,6 +24,8 @@ import TeamAdmin from "./pages/admin/TeamAdmin";
 import Settings from "./pages/admin/Settings";
 import HeroAdmin from "./pages/admin/HeroAdmin";
 import WorksAdmin from "./pages/admin/WorksAdmin";
+import ExperienceAdmin from "./pages/admin/ExperienceAdmin";
+import ServiceAdmin from "./pages/admin/ServiceAdmin";
 
 
 function App() {
@@ -73,13 +75,16 @@ function App() {
           {/* ── Protected Admin ────────────────────────── */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/dashboard"       element={<Dashboard />} />
+<Route path="/admin/hero" element={<HeroAdmin />} />
+            <Route path="/admin/experiences"     element={<ExperienceAdmin />} />
+            <Route path="/admin/services" element={<ServiceAdmin />} />
+            <Route path="/admin/works" element={<WorksAdmin />} />
             <Route path="/admin/blogs"           element={<BlogsAdmin />} />
             <Route path="/admin/blogs/create"    element={<BlogForm />} />
             <Route path="/admin/blogs/edit/:id"  element={<BlogForm />} />
             <Route path="/admin/team"            element={<TeamAdmin />} />
             <Route path="/admin/settings"        element={<Settings />} />
-            <Route path="/admin/hero" element={<HeroAdmin />} />
-            <Route path="/admin/works" element={<WorksAdmin />} />
+            
           </Route>
 
           {/* ── Fallbacks ──────────────────────────────── */}
