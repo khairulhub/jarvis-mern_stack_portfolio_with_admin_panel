@@ -51,6 +51,12 @@ export const updateProfile = async (profileData) => {
   return data;
 };
 
+
+
+
+
+
+
 // ─── Blogs ───────────────────────────────────────────────────
 export const getPublicBlogs = async (params = {}) => {
   const { data } = await API.get("/blogs", { params });
@@ -86,6 +92,10 @@ export const deleteBlog = async (id) => {
   const { data } = await API.delete(`/blogs/${id}`);
   return data;
 };
+
+
+
+
 
 // ─── Team ────────────────────────────────────────────────────
 export const getPublicTeam = async () => {
@@ -229,6 +239,44 @@ export const toggleWork = async (id) => {
   return data;
 };
 
+
+
+
+// ─── Codings ──────────────────────────────────────────────
+export const getCodings = async () => {
+  const { data } = await API.get("/codings");
+  return data;
+};
+
+export const getAdminCodings = async () => {
+  const { data } = await API.get("/codings/admin/all");
+  return data;
+};
+
+export const getCodingById = async (id) => {
+  const { data } = await API.get(`/codings/${id}`);
+  return data;
+};
+
+export const createCoding = async (codingData) => {
+  const { data } = await API.post("/codings", codingData);
+  return data;
+};
+
+export const updateCoding = async (id, codingData) => {
+  const { data } = await API.put(`/codings/${id}`, codingData);
+  return data;
+};
+
+export const deleteCoding = async (id) => {
+  const { data } = await API.delete(`/codings/${id}`);
+  return data;
+};
+
+export const toggleCoding = async (id) => {
+  const { data } = await API.patch(`/codings/${id}/toggle`);
+  return data;
+};
 
 
 

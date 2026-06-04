@@ -26,6 +26,7 @@ import HeroAdmin from "./pages/admin/HeroAdmin";
 import WorksAdmin from "./pages/admin/WorksAdmin";
 import ExperienceAdmin from "./pages/admin/ExperienceAdmin";
 import ServiceAdmin from "./pages/admin/ServiceAdmin";
+import CodingAdmin from "./pages/admin/CodingAdmin";
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             <Route path="/admin/experiences"     element={<ExperienceAdmin />} />
             <Route path="/admin/services" element={<ServiceAdmin />} />
             <Route path="/admin/works" element={<WorksAdmin />} />
+            <Route path="/admin/codings"         element={<CodingAdmin />} />
             <Route path="/admin/blogs"           element={<BlogsAdmin />} />
             <Route path="/admin/blogs/create"    element={<BlogForm />} />
             <Route path="/admin/blogs/edit/:id"  element={<BlogForm />} />

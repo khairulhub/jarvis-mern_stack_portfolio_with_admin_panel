@@ -21,6 +21,7 @@ app.use("/api/team",   require("./routes/teamRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/hero",   require("./routes/heroRoutes"));
 app.use("/api/works",  require("./routes/workRoutes"));
+app.use("/api/codings", require("./routes/codingRoutes"));
 app.use("/api/services",  require("./routes/Serviceroutes"));
 
 app.get("/api/health", (req, res) => {
@@ -80,6 +81,16 @@ const seedWorks = async () => {
 };
 
 
+// Codings seed function — শুধু প্রথমবার চলবে
+const seedCodings = async () => {
+  const Coding = require("./models/Coding");
+  const count = await Coding.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Codings already seeded (${count}) — skip.`);
+
+  const data = require("./data/coding.seed.json");
+  await Coding.insertMany(data);
+  console.log(`✅ Codings seeded — ${data.length} entries inserted.`);
+};
 
 
 
@@ -96,6 +107,7 @@ mongoose
     await seedExperiences();
     await seedServices();
     await seedWorks();
+    await seedCodings();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {

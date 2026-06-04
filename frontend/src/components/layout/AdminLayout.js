@@ -12,6 +12,7 @@ const navItems = [
    { path: "/admin/hero",      icon: HiOutlinePhotograph,   label: "Hero Section" }, //new
 { path: "/admin/experiences", icon: HiOutlineBriefcase,    label: "Experiences"  }, //new
   { path: "/admin/services", icon: HiOutlineCollection, label: "Services" }, //new
+  { path: "/admin/codings",     icon: HiOutlineCode,         label: "Coding Ref"   }, //new
   { path: "/admin/blogs", icon: HiOutlineDocumentText, label: "Blogs" },
   { path: "/admin/team", icon: HiOutlineUsers, label: "Team" },
  

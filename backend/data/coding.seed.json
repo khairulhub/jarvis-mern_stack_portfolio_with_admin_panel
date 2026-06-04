@@ -1,0 +1,308 @@
+[
+  {
+    "order": 1,
+    "icon": "ti-brand-react",
+    "title": "MERN Stack Setup",
+    "color": "#00e5ff",
+    "colorBg": "rgba(0,229,255,0.08)",
+    "colorBorder": "rgba(0,229,255,0.25)",
+    "shortDesc": "Full-stack MongoDB, Express, React & Node.js starter template.",
+    "tags": ["MongoDB", "Express", "React", "Node.js", "Mongoose", "dotenv", "CORS"],
+    "codes": [
+      {
+        "tag": "MongoDB",
+        "label": "MongoDB — Setup & Connection",
+        "lang": "js",
+        "snippet": "// npm install mongoose\n\n// db.js\nconst mongoose = require('mongoose');\n\nconst connectDB = async () => {\n  try {\n    await mongoose.connect(process.env.MONGO_URI, {\n      useNewUrlParser: true,\n      useUnifiedTopology: true,\n    });\n    console.log('✅ MongoDB connected');\n  } catch (err) {\n    console.error('❌ MongoDB error:', err.message);\n    process.exit(1);\n  }\n};\n\nmodule.exports = connectDB;\n\n// .env\n// MONGO_URI=mongodb://localhost:27017/myapp\n// Or Atlas: MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/myapp"
+      },
+      {
+        "tag": "Express",
+        "label": "Express — Server Bootstrap",
+        "lang": "js",
+        "snippet": "// npm install express cors dotenv\n\n// server.js\nconst express = require('express');\nconst cors    = require('cors');\nconst dotenv  = require('dotenv');\nconst connectDB = require('./db');\n\ndotenv.config();\nconnectDB();\n\nconst app = express();\napp.use(cors());\napp.use(express.json());\n\n// Routes\napp.use('/api/auth',  require('./routes/auth'));\napp.use('/api/users', require('./routes/users'));\n\napp.get('/', (req, res) => res.send('API Running ✅'));\n\nconst PORT = process.env.PORT || 5000;\napp.listen(PORT, () => console.log(`Server on port ${PORT}`));"
+      },
+      {
+        "tag": "React",
+        "label": "React — Vite Project Init",
+        "lang": "bash",
+        "snippet": "# Create React app with Vite\nnpm create vite@latest client -- --template react\ncd client\nnpm install\n\n# Install common deps\nnpm install axios react-router-dom react-hot-toast\n\n# src/api/axios.js\nimport axios from 'axios';\nconst API = axios.create({ baseURL: 'http://localhost:5000/api' });\nexport default API;"
+      },
+      {
+        "tag": "Node.js",
+        "label": "Node.js — Full Project Structure",
+        "lang": "bash",
+        "snippet": "# Init backend\nmkdir server && cd server\nnpm init -y\nnpm install express mongoose cors dotenv bcryptjs jsonwebtoken\n\n# Dev dependency\nnpm install -D nodemon\n\n# package.json scripts\n{\n  \"scripts\": {\n    \"start\": \"node server.js\",\n    \"dev\": \"nodemon server.js\"\n  }\n}\n\n# Folder structure\nserver/\n├── config/      # db.js\n├── controllers/ # logic\n├── middleware/  # auth, error\n├── models/      # mongoose schemas\n├── routes/      # express routers\n└── server.js"
+      },
+      {
+        "tag": "Mongoose",
+        "label": "Mongoose — Model Example",
+        "lang": "js",
+        "snippet": "// models/User.js\nconst mongoose = require('mongoose');\n\nconst userSchema = new mongoose.Schema(\n  {\n    name:     { type: String, required: true, trim: true },\n    email:    { type: String, required: true, unique: true, lowercase: true },\n    password: { type: String, required: true, minlength: 6 },\n    role:     { type: String, enum: ['user', 'admin'], default: 'user' },\n    avatar:   { type: String, default: '' },\n  },\n  { timestamps: true }\n);\n\nconst bcrypt = require('bcryptjs');\nuserSchema.pre('save', async function (next) {\n  if (!this.isModified('password')) return next();\n  this.password = await bcrypt.hash(this.password, 10);\n  next();\n});\n\nmodule.exports = mongoose.model('User', userSchema);"
+      },
+      {
+        "tag": "dotenv",
+        "label": "dotenv — Environment Variables",
+        "lang": "bash",
+        "snippet": "# .env  (never commit this file!)\nPORT=5000\nMONGO_URI=mongodb://localhost:27017/myapp\nJWT_SECRET=your_super_secret_key_here\nCLIENT_URL=http://localhost:5173\n\n# .gitignore\nnode_modules/\n.env\ndist/\n\n# Load in server.js (top of file)\n# require('dotenv').config();\n\n# Access anywhere\n# process.env.PORT\n# process.env.MONGO_URI\n# process.env.JWT_SECRET"
+      },
+      {
+        "tag": "CORS",
+        "label": "CORS — Configuration",
+        "lang": "js",
+        "snippet": "// npm install cors\n\n// Option 1: Allow all (development)\napp.use(cors());\n\n// Option 2: Restrict to frontend origin (production)\nconst corsOptions = {\n  origin: process.env.CLIENT_URL || 'http://localhost:5173',\n  credentials: true,\n  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],\n  allowedHeaders: ['Content-Type', 'Authorization'],\n};\napp.use(cors(corsOptions));\n\n// For preflight\napp.options('*', cors(corsOptions));"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 2,
+    "icon": "ti-brand-php",
+    "title": "Laravel Project",
+    "color": "#a855f7",
+    "colorBg": "rgba(168,85,247,0.08)",
+    "colorBorder": "rgba(168,85,247,0.25)",
+    "shortDesc": "Laravel starter — routing, auth, Eloquent models & migrations.",
+    "tags": ["Install", "Routing", "Eloquent", "Migration", "Sanctum", "Middleware", "Blade"],
+    "codes": [
+      {
+        "tag": "Install",
+        "label": "Laravel — Install & Setup",
+        "lang": "bash",
+        "snippet": "# Requirements: PHP >= 8.1, Composer\n\n# Create project\ncomposer create-project laravel/laravel my-app\ncd my-app\n\n# Serve locally\nphp artisan serve   # http://127.0.0.1:8000\n\n# .env setup\nDB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=my_app\nDB_USERNAME=root\nDB_PASSWORD=\n\n# Generate app key\nphp artisan key:generate\n\n# Run migrations\nphp artisan migrate"
+      },
+      {
+        "tag": "Routing",
+        "label": "Laravel — Routing",
+        "lang": "php",
+        "snippet": "<?php\n// routes/web.php   — for Blade views\nRoute::get('/', fn() => view('welcome'));\nRoute::get('/about', [PageController::class, 'about']);\n\n// routes/api.php   — for REST API\nRoute::prefix('v1')->group(function () {\n    // Public routes\n    Route::post('/login',    [AuthController::class, 'login']);\n    Route::post('/register', [AuthController::class, 'register']);\n\n    // Protected routes\n    Route::middleware('auth:sanctum')->group(function () {\n        Route::get('/user',  [UserController::class, 'me']);\n        Route::apiResource('posts', PostController::class);\n    });\n});"
+      },
+      {
+        "tag": "Eloquent",
+        "label": "Eloquent — Model & Relationships",
+        "lang": "php",
+        "snippet": "<?php\n// app/Models/Post.php\nnamespace App\\Models;\nuse Illuminate\\Database\\Eloquent\\Model;\n\nclass Post extends Model {\n    protected $fillable = ['title', 'body', 'user_id', 'published'];\n    protected $casts = ['published' => 'boolean'];\n\n    public function user()    { return $this->belongsTo(User::class); }\n    public function tags()    { return $this->belongsToMany(Tag::class); }\n    public function comments(){ return $this->hasMany(Comment::class); }\n}\n\n// Usage in controller\n$posts = Post::with('user', 'tags')\n             ->where('published', true)\n             ->latest()\n             ->paginate(10);"
+      },
+      {
+        "tag": "Migration",
+        "label": "Migration — Create Table",
+        "lang": "php",
+        "snippet": "<?php\n// php artisan make:migration create_posts_table\n\nreturn new class extends Migration {\n    public function up(): void {\n        Schema::create('posts', function (Blueprint $table) {\n            $table->id();\n            $table->foreignId('user_id')->constrained()->cascadeOnDelete();\n            $table->string('title');\n            $table->string('slug')->unique();\n            $table->text('body');\n            $table->boolean('published')->default(false);\n            $table->timestamps();\n        });\n    }\n\n    public function down(): void {\n        Schema::dropIfExists('posts');\n    }\n};\n\n// Run: php artisan migrate\n// Rollback: php artisan migrate:rollback"
+      },
+      {
+        "tag": "Sanctum",
+        "label": "Sanctum — API Auth",
+        "lang": "bash",
+        "snippet": "# Install\ncomposer require laravel/sanctum\nphp artisan vendor:publish --provider=\"Laravel\\Sanctum\\SanctumServiceProvider\"\nphp artisan migrate\n\n# app/Models/User.php — add trait\n# use Laravel\\Sanctum\\HasApiTokens;\n\n// AuthController.php\npublic function login(Request $request) {\n    if (!Auth::attempt($request->only('email','password'))) {\n        return response()->json(['message' => 'Invalid credentials'], 401);\n    }\n    $token = $request->user()->createToken('api-token')->plainTextToken;\n    return response()->json(['token' => $token]);\n}\n\n// Protected route — send header:\n// Authorization: Bearer <token>"
+      },
+      {
+        "tag": "Middleware",
+        "label": "Middleware — Custom Auth Check",
+        "lang": "php",
+        "snippet": "<?php\n// php artisan make:middleware IsAdmin\n\nclass IsAdmin {\n    public function handle(Request $request, Closure $next) {\n        if ($request->user()?->role !== 'admin') {\n            return response()->json(['message' => 'Forbidden'], 403);\n        }\n        return $next($request);\n    }\n}\n\n// Register in bootstrap/app.php (Laravel 11)\n->withMiddleware(function (Middleware $middleware) {\n    $middleware->alias(['admin' => IsAdmin::class]);\n})\n\n// Use in route\nRoute::middleware(['auth:sanctum', 'admin'])->group(function () {\n    Route::get('/admin/dashboard', [AdminController::class, 'index']);\n});"
+      },
+      {
+        "tag": "Blade",
+        "label": "Blade — Template Syntax",
+        "lang": "html",
+        "snippet": "{{-- layouts/app.blade.php --}}\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>@yield('title', 'MyApp')</title>\n  @vite(['resources/css/app.css', 'resources/js/app.js'])\n</head>\n<body>\n  @include('partials.nav')\n  <main>@yield('content')</main>\n</body>\n</html>\n\n{{-- posts/index.blade.php --}}\n@extends('layouts.app')\n@section('content')\n  @forelse($posts as $post)\n    <article>\n      <h2>{{ $post->title }}</h2>\n      @if($post->published) <span>Live</span> @endif\n    </article>\n  @empty\n    <p>No posts found.</p>\n  @endforelse\n  {{ $posts->links() }}\n@endsection"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 3,
+    "icon": "ti-api",
+    "title": "API Integration",
+    "color": "#00ff88",
+    "colorBg": "rgba(0,255,136,0.08)",
+    "colorBorder": "rgba(0,255,136,0.25)",
+    "shortDesc": "REST & third-party API integration with Axios, fetch & error handling.",
+    "tags": ["Axios Setup", "Interceptors", "REST CRUD", "Error Handling", "React Query", "Env Config"],
+    "codes": [
+      {
+        "tag": "Axios Setup",
+        "label": "Axios — Base Instance",
+        "lang": "js",
+        "snippet": "// npm install axios\n\n// src/api/axiosInstance.js\nimport axios from 'axios';\n\nconst API = axios.create({\n  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',\n  timeout: 10000,\n  headers: { 'Content-Type': 'application/json' },\n});\n\n// Attach JWT token to every request\nAPI.interceptors.request.use((config) => {\n  const token = localStorage.getItem('token');\n  if (token) config.headers.Authorization = `Bearer ${token}`;\n  return config;\n});\n\nexport default API;"
+      },
+      {
+        "tag": "Interceptors",
+        "label": "Axios — Response Interceptors",
+        "lang": "js",
+        "snippet": "// Auto-refresh on 401\nAPI.interceptors.response.use(\n  (response) => response,\n  async (error) => {\n    const original = error.config;\n\n    if (error.response?.status === 401 && !original._retry) {\n      original._retry = true;\n      try {\n        const { data } = await axios.post('/api/auth/refresh', {\n          refreshToken: localStorage.getItem('refreshToken'),\n        });\n        localStorage.setItem('token', data.token);\n        original.headers.Authorization = `Bearer ${data.token}`;\n        return API(original);\n      } catch {\n        localStorage.clear();\n        window.location.href = '/login';\n      }\n    }\n    return Promise.reject(error);\n  }\n);"
+      },
+      {
+        "tag": "REST CRUD",
+        "label": "REST — CRUD Calls",
+        "lang": "js",
+        "snippet": "// src/api/posts.js\nimport API from './axiosInstance';\n\nexport const getPosts   = ()         => API.get('/posts');\nexport const getPost    = (id)       => API.get(`/posts/${id}`);\nexport const createPost = (data)     => API.post('/posts', data);\nexport const updatePost = (id, data) => API.put(`/posts/${id}`, data);\nexport const deletePost = (id)       => API.delete(`/posts/${id}`);\n\n// Usage in React component\nconst [posts, setPosts] = useState([]);\nuseEffect(() => {\n  getPosts()\n    .then(res => setPosts(res.data))\n    .catch(err => console.error(err));\n}, []);"
+      },
+      {
+        "tag": "Error Handling",
+        "label": "Error — Centralized Handler",
+        "lang": "js",
+        "snippet": "// src/utils/handleError.js\nexport function handleError(err) {\n  if (err.response) {\n    const { status, data } = err.response;\n    if (status === 400) return data.message || 'Bad request';\n    if (status === 401) return 'Unauthorized — please login';\n    if (status === 403) return 'Forbidden';\n    if (status === 404) return 'Not found';\n    if (status >= 500) return 'Server error — try again later';\n  }\n  if (err.request) return 'No response from server';\n  return err.message || 'Something went wrong';\n}\n\n// In component\ntry {\n  await createPost(formData);\n  toast.success('Post created!');\n} catch (err) {\n  toast.error(handleError(err));\n}"
+      },
+      {
+        "tag": "React Query",
+        "label": "React Query — Data Fetching",
+        "lang": "js",
+        "snippet": "// npm install @tanstack/react-query\n\nimport { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';\nimport { getPosts, deletePost } from '../api/posts';\n\n// Fetch\nconst { data, isLoading, error } = useQuery({\n  queryKey: ['posts'],\n  queryFn: getPosts,\n  staleTime: 1000 * 60 * 5, // 5 min cache\n});\n\n// Mutation + invalidate\nconst queryClient = useQueryClient();\nconst deleteMutation = useMutation({\n  mutationFn: deletePost,\n  onSuccess: () => {\n    queryClient.invalidateQueries({ queryKey: ['posts'] });\n    toast.success('Deleted!');\n  },\n});"
+      },
+      {
+        "tag": "Env Config",
+        "label": "Env — Vite & CRA Config",
+        "lang": "bash",
+        "snippet": "# ── Vite (.env)\nVITE_API_URL=http://localhost:5000/api\nVITE_APP_NAME=MyApp\n\n# Access in code\nimport.meta.env.VITE_API_URL\n\n# ── Create React App (.env)\nREACT_APP_API_URL=http://localhost:5000/api\nREACT_APP_NAME=MyApp\n\n# Access in code\nprocess.env.REACT_APP_API_URL\n\n# .env.local   → local only (not committed)\n# .env.production → production overrides\n# .env.development → dev overrides\n\n# .gitignore\n.env\n.env.local\n.env.production"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 4,
+    "icon": "ti-lock",
+    "title": "Auth & Security",
+    "color": "#f87171",
+    "colorBg": "rgba(239,68,68,0.08)",
+    "colorBorder": "rgba(239,68,68,0.25)",
+    "shortDesc": "JWT auth, bcrypt hashing, role-based access, and protected routes.",
+    "tags": ["JWT", "bcrypt", "Middleware", "Role Guard", "React Auth", "Refresh Token"],
+    "codes": [
+      {
+        "tag": "JWT",
+        "label": "JWT — Sign & Verify",
+        "lang": "js",
+        "snippet": "// npm install jsonwebtoken\nconst jwt = require('jsonwebtoken');\n\n// Sign token\nconst signToken = (userId) =>\n  jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });\n\n// Verify token middleware\nconst protect = (req, res, next) => {\n  const auth = req.headers.authorization;\n  if (!auth?.startsWith('Bearer '))\n    return res.status(401).json({ message: 'No token' });\n\n  try {\n    const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET);\n    req.user = decoded;\n    next();\n  } catch {\n    res.status(401).json({ message: 'Invalid token' });\n  }\n};"
+      },
+      {
+        "tag": "bcrypt",
+        "label": "bcrypt — Hash & Compare",
+        "lang": "js",
+        "snippet": "// npm install bcryptjs\nconst bcrypt = require('bcryptjs');\n\n// Hash password on register\nconst hash = await bcrypt.hash(password, 12);\n\n// Compare on login\nconst match = await bcrypt.compare(password, user.password);\nif (!match) return res.status(401).json({ message: 'Wrong password' });\n\n// In Mongoose model (auto-hash)\nuserSchema.pre('save', async function (next) {\n  if (!this.isModified('password')) return next();\n  this.password = await bcrypt.hash(this.password, 12);\n  next();\n});"
+      },
+      {
+        "tag": "Middleware",
+        "label": "Express — Auth Middleware",
+        "lang": "js",
+        "snippet": "// middleware/authMiddleware.js\nconst protect = async (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n  if (!token) return res.status(401).json({ message: 'Unauthorized' });\n\n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET);\n    req.user = await User.findById(decoded.id).select('-password');\n    next();\n  } catch {\n    res.status(401).json({ message: 'Token expired or invalid' });\n  }\n};\n\nconst adminOnly = (req, res, next) => {\n  if (req.user?.role !== 'admin')\n    return res.status(403).json({ message: 'Admin only' });\n  next();\n};\n\nmodule.exports = { protect, adminOnly };"
+      },
+      {
+        "tag": "Role Guard",
+        "label": "React — Role-Based Route Guard",
+        "lang": "js",
+        "snippet": "// components/ProtectedRoute.jsx\nimport { Navigate, Outlet } from 'react-router-dom';\nimport { useAuth } from '../context/AuthContext';\n\nexport default function ProtectedRoute({ role }) {\n  const { user, loading } = useAuth();\n\n  if (loading) return <div>Loading...</div>;\n  if (!user) return <Navigate to='/login' replace />;\n  if (role && user.role !== role)\n    return <Navigate to='/unauthorized' replace />;\n\n  return <Outlet />;\n}\n\n// Usage in router\n<Route element={<ProtectedRoute role='admin' />}>\n  <Route path='/admin/dashboard' element={<Dashboard />} />\n</Route>"
+      },
+      {
+        "tag": "React Auth",
+        "label": "React — Auth Context",
+        "lang": "js",
+        "snippet": "// context/AuthContext.jsx\nimport { createContext, useContext, useState, useEffect } from 'react';\n\nconst AuthCtx = createContext(null);\n\nexport function AuthProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    const saved = localStorage.getItem('user');\n    if (saved) setUser(JSON.parse(saved));\n    setLoading(false);\n  }, []);\n\n  const login = (userData, token) => {\n    localStorage.setItem('token', token);\n    localStorage.setItem('user', JSON.stringify(userData));\n    setUser(userData);\n  };\n\n  const logout = () => {\n    localStorage.clear();\n    setUser(null);\n  };\n\n  return <AuthCtx.Provider value={{ user, loading, login, logout }}>{children}</AuthCtx.Provider>;\n}\n\nexport const useAuth = () => useContext(AuthCtx);"
+      },
+      {
+        "tag": "Refresh Token",
+        "label": "Refresh Token — Rotation Strategy",
+        "lang": "js",
+        "snippet": "// Issue both tokens on login\nconst accessToken  = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '15m' });\nconst refreshToken = jwt.sign({ id }, process.env.REFRESH_SECRET, { expiresIn: '7d' });\n\n// Store refresh token in httpOnly cookie\nres.cookie('refresh', refreshToken, {\n  httpOnly: true,\n  secure: process.env.NODE_ENV === 'production',\n  sameSite: 'strict',\n  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days\n});\n\n// Refresh endpoint\napp.post('/api/auth/refresh', (req, res) => {\n  const token = req.cookies.refresh;\n  if (!token) return res.status(401).json({ message: 'No refresh token' });\n  const decoded = jwt.verify(token, process.env.REFRESH_SECRET);\n  const newAccess = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, { expiresIn: '15m' });\n  res.json({ accessToken: newAccess });\n});"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 5,
+    "icon": "ti-network",
+    "title": "Networking & Cisco",
+    "color": "#facc15",
+    "colorBg": "rgba(250,204,21,0.08)",
+    "colorBorder": "rgba(250,204,21,0.25)",
+    "shortDesc": "Cisco CLI commands for VLAN, DHCP, OSPF, ACL and network setup.",
+    "tags": ["VLAN", "DHCP", "OSPF", "ACL", "NAT/PAT", "STP"],
+    "codes": [
+      {
+        "tag": "VLAN",
+        "label": "VLAN — Create & Assign Ports",
+        "lang": "bash",
+        "snippet": "! Create VLANs on switch\nswitch(config)# vlan 10\nswitch(config-vlan)# name OFFICE\nswitch(config)# vlan 20\nswitch(config-vlan)# name CCTV\n\n! Assign access port\nswitch(config)# interface fa0/1\nswitch(config-if)# switchport mode access\nswitch(config-if)# switchport access vlan 10\n\n! Configure trunk port (to router/L3 switch)\nswitch(config)# interface gi0/1\nswitch(config-if)# switchport mode trunk\nswitch(config-if)# switchport trunk allowed vlan 10,20\n\n! Verify\nswitch# show vlan brief\nswitch# show interfaces trunk"
+      },
+      {
+        "tag": "DHCP",
+        "label": "DHCP — Server Configuration",
+        "lang": "bash",
+        "snippet": "! Configure DHCP on Cisco router\nrouter(config)# ip dhcp excluded-address 192.168.10.1 192.168.10.10\nrouter(config)# ip dhcp pool OFFICE_POOL\nrouter(dhcp-config)# network 192.168.10.0 255.255.255.0\nrouter(dhcp-config)# default-router 192.168.10.1\nrouter(dhcp-config)# dns-server 8.8.8.8 8.8.4.4\nrouter(dhcp-config)# lease 7\n\n! DHCP for CCTV VLAN\nrouter(config)# ip dhcp excluded-address 192.168.20.1 192.168.20.10\nrouter(config)# ip dhcp pool CCTV_POOL\nrouter(dhcp-config)# network 192.168.20.0 255.255.255.0\nrouter(dhcp-config)# default-router 192.168.20.1\n\n! Verify\nrouter# show ip dhcp binding\nrouter# show ip dhcp pool"
+      },
+      {
+        "tag": "OSPF",
+        "label": "OSPF — Single Area Config",
+        "lang": "bash",
+        "snippet": "! Enable OSPF on router\nrouter(config)# router ospf 1\nrouter(config-router)# router-id 1.1.1.1\n\n! Advertise networks\nrouter(config-router)# network 192.168.1.0 0.0.0.255 area 0\nrouter(config-router)# network 10.0.0.0 0.0.0.3 area 0\n\n! Passive interface (don't send OSPF on end-user ports)\nrouter(config-router)# passive-interface GigabitEthernet0/0\n\n! Verify\nrouter# show ip ospf neighbor\nrouter# show ip route ospf\nrouter# show ip ospf interface brief"
+      },
+      {
+        "tag": "ACL",
+        "label": "ACL — Standard & Extended",
+        "lang": "bash",
+        "snippet": "! Standard ACL — filter by source IP\nrouter(config)# access-list 10 permit 192.168.10.0 0.0.0.255\nrouter(config)# access-list 10 deny any\n\n! Extended ACL — filter by src, dst, protocol, port\nrouter(config)# access-list 100 permit tcp 192.168.10.0 0.0.0.255 any eq 80\nrouter(config)# access-list 100 permit tcp 192.168.10.0 0.0.0.255 any eq 443\nrouter(config)# access-list 100 deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255\nrouter(config)# access-list 100 permit ip any any\n\n! Apply to interface\nrouter(config)# interface gi0/0\nrouter(config-if)# ip access-group 100 in\n\n! Verify\nrouter# show access-lists"
+      },
+      {
+        "tag": "NAT/PAT",
+        "label": "NAT/PAT — Internet Access",
+        "lang": "bash",
+        "snippet": "! Define inside/outside interfaces\nrouter(config)# interface gi0/0\nrouter(config-if)# ip nat inside\nrouter(config)# interface gi0/1\nrouter(config-if)# ip nat outside\n\n! PAT (overload) — many private IPs share one public IP\nrouter(config)# access-list 1 permit 192.168.0.0 0.0.255.255\nrouter(config)# ip nat inside source list 1 interface gi0/1 overload\n\n! Static NAT — map private server to public IP\nrouter(config)# ip nat inside source static 192.168.1.100 203.0.113.10\n\n! Verify\nrouter# show ip nat translations\nrouter# show ip nat statistics"
+      },
+      {
+        "tag": "STP",
+        "label": "STP — Spanning Tree Config",
+        "lang": "bash",
+        "snippet": "! Set root bridge for VLAN\nswitch(config)# spanning-tree vlan 10 priority 4096\nswitch(config)# spanning-tree vlan 20 priority 4096\n\n! Or use macro\nswitch(config)# spanning-tree vlan 10 root primary\nswitch(config)# spanning-tree vlan 20 root secondary\n\n! Enable PortFast on end-device ports (skip STP for access ports)\nswitch(config)# interface range fa0/1 - 24\nswitch(config-if-range)# spanning-tree portfast\n\n! Enable BPDU Guard (protect PortFast ports)\nswitch(config-if-range)# spanning-tree bpduguard enable\n\n! Verify\nswitch# show spanning-tree vlan 10\nswitch# show spanning-tree summary"
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "order": 6,
+    "icon": "ti-device-desktop-code",
+    "title": "IoT & Arduino",
+    "color": "#00ff88",
+    "colorBg": "rgba(0,255,136,0.08)",
+    "colorBorder": "rgba(0,255,136,0.25)",
+    "shortDesc": "Arduino sensors, MQTT communication, and IoT dashboard integration.",
+    "tags": ["Arduino", "MQTT", "Sensor", "WiFi", "Node-RED", "MongoDB IoT"],
+    "codes": [
+      {
+        "tag": "Arduino",
+        "label": "Arduino — Basic Sensor Read",
+        "lang": "cpp",
+        "snippet": "// Arduino sketch — read DHT11 temperature & humidity\n#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT11\n\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n}\n\nvoid loop() {\n  delay(2000);\n\n  float humidity    = dht.readHumidity();\n  float temperature = dht.readTemperature(); // Celsius\n\n  if (isnan(humidity) || isnan(temperature)) {\n    Serial.println(\"Failed to read from DHT sensor!\");\n    return;\n  }\n\n  Serial.print(\"Humidity: \");\n  Serial.print(humidity);\n  Serial.print(\"%  Temperature: \");\n  Serial.print(temperature);\n  Serial.println(\"°C\");\n}"
+      },
+      {
+        "tag": "MQTT",
+        "label": "MQTT — Publish Sensor Data",
+        "lang": "cpp",
+        "snippet": "// ESP8266 + PubSubClient — publish to MQTT broker\n#include <ESP8266WiFi.h>\n#include <PubSubClient.h>\n\nconst char* ssid     = \"YOUR_SSID\";\nconst char* password = \"YOUR_PASS\";\nconst char* mqtt_server = \"192.168.1.100\";\n\nWiFiClient espClient;\nPubSubClient client(espClient);\n\nvoid setup() {\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) delay(500);\n  client.setServer(mqtt_server, 1883);\n  client.connect(\"ESP8266Client\");\n}\n\nvoid loop() {\n  float temp = readTemperature();\n  char msg[50];\n  sprintf(msg, \"{\\\"temp\\\":%.1f}\", temp);\n  client.publish(\"sensors/temperature\", msg);\n  delay(5000);\n}"
+      },
+      {
+        "tag": "Sensor",
+        "label": "Sensor — Multiple Sensor Types",
+        "lang": "cpp",
+        "snippet": "// Common sensor reads — Arduino\n\n// LDR (Light sensor)\nint ldrPin = A0;\nint lightValue = analogRead(ldrPin); // 0-1023\n\n// PIR Motion sensor\nint pirPin = 3;\npinMode(pirPin, INPUT);\nbool motion = digitalRead(pirPin); // HIGH = motion\n\n// Ultrasonic (HC-SR04) distance\nlong duration;\nfloat distance;\ndigitalWrite(trigPin, HIGH);\ndelayMicroseconds(10);\ndigitalWrite(trigPin, LOW);\nduration = pulseIn(echoPin, HIGH);\ndistance = duration * 0.034 / 2; // cm\n\n// Relay control\nint relayPin = 7;\npinMode(relayPin, OUTPUT);\ndigitalWrite(relayPin, HIGH); // ON\ndigitalWrite(relayPin, LOW);  // OFF"
+      },
+      {
+        "tag": "WiFi",
+        "label": "ESP8266 — WiFi + HTTP POST",
+        "lang": "cpp",
+        "snippet": "#include <ESP8266WiFi.h>\n#include <ESP8266HTTPClient.h>\n#include <ArduinoJson.h>\n\nconst char* serverURL = \"http://192.168.1.10:5000/api/sensor\";\n\nvoid postData(float temp, float humidity) {\n  if (WiFi.status() != WL_CONNECTED) return;\n\n  WiFiClient client;\n  HTTPClient http;\n  http.begin(client, serverURL);\n  http.addHeader(\"Content-Type\", \"application/json\");\n\n  StaticJsonDocument<100> doc;\n  doc[\"temperature\"] = temp;\n  doc[\"humidity\"]    = humidity;\n  doc[\"device\"]      = \"ESP8266-01\";\n\n  String body;\n  serializeJson(doc, body);\n\n  int code = http.POST(body);\n  Serial.println(\"HTTP Response: \" + String(code));\n  http.end();\n}"
+      },
+      {
+        "tag": "Node-RED",
+        "label": "Node-RED — Flow Config (JSON)",
+        "lang": "js",
+        "snippet": "// Node-RED flow: MQTT → Parse → MongoDB\n// Import this JSON in Node-RED menu → Import\n\n[\n  {\n    \"id\": \"mqtt-in\",\n    \"type\": \"mqtt in\",\n    \"topic\": \"sensors/#\",\n    \"broker\": \"localBroker\"\n  },\n  {\n    \"id\": \"parse-json\",\n    \"type\": \"json\",\n    \"action\": \"obj\"\n  },\n  {\n    \"id\": \"set-timestamp\",\n    \"type\": \"function\",\n    \"func\": \"msg.payload.timestamp = new Date(); return msg;\"\n  },\n  {\n    \"id\": \"mongo-out\",\n    \"type\": \"mongodb out\",\n    \"collection\": \"sensorData\",\n    \"operation\": \"insert\"\n  }\n]"
+      },
+      {
+        "tag": "MongoDB IoT",
+        "label": "Node.js — Save IoT Data to MongoDB",
+        "lang": "js",
+        "snippet": "// models/SensorData.js\nconst sensorSchema = new mongoose.Schema({\n  device:      { type: String, required: true },\n  temperature: Number,\n  humidity:    Number,\n  timestamp:   { type: Date, default: Date.now },\n});\nconst SensorData = mongoose.model('SensorData', sensorSchema);\n\n// MQTT subscriber → save to DB\nconst mqtt = require('mqtt');\nconst client = mqtt.connect('mqtt://localhost');\n\nclient.subscribe('sensors/#');\nclient.on('message', async (topic, message) => {\n  try {\n    const payload = JSON.parse(message.toString());\n    await SensorData.create({ device: topic, ...payload });\n    console.log('Saved:', payload);\n  } catch (err) {\n    console.error('Save error:', err.message);\n  }\n});"
+      }
+    ],
+    "isActive": true
+  }
+]
