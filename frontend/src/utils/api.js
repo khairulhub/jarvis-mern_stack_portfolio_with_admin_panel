@@ -318,4 +318,74 @@ export const toggleNetwork = async (id) => {
 
 
 
+
+
+// ─── Photo Categories ──────────────────────────────────────────
+export const getPublicPhotoCategories = async () => {
+  const { data } = await API.get("/photo-categories");
+  return data;
+};
+
+export const getAdminPhotoCategories = async () => {
+  const { data } = await API.get("/photo-categories/admin/all");
+  return data;
+};
+
+export const createPhotoCategory = async (catData) => {
+  const { data } = await API.post("/photo-categories", catData);
+  return data;
+};
+
+export const updatePhotoCategory = async (id, catData) => {
+  const { data } = await API.put(`/photo-categories/${id}`, catData);
+  return data;
+};
+
+export const deletePhotoCategory = async (id) => {
+  const { data } = await API.delete(`/photo-categories/${id}`);
+  return data;
+};
+
+export const togglePhotoCategory = async (id) => {
+  const { data } = await API.patch(`/photo-categories/${id}/toggle`);
+  return data;
+};
+
+
+// ─── Photos ────────────────────────────────────────────────────
+export const getPublicPhotos = async (category = "") => {
+  const params = category && category !== "ALL" ? { category } : {};
+  const { data } = await API.get("/photos", { params });
+  return data;
+};
+
+export const getAdminPhotos = async () => {
+  const { data } = await API.get("/photos/admin/all");
+  return data;
+};
+
+export const createPhoto = async (photoData) => {
+  const { data } = await API.post("/photos", photoData);
+  return data;
+};
+
+export const updatePhoto = async (id, photoData) => {
+  const { data } = await API.put(`/photos/${id}`, photoData);
+  return data;
+};
+
+export const deletePhoto = async (id) => {
+  const { data } = await API.delete(`/photos/${id}`);
+  return data;
+};
+
+export const togglePhoto = async (id) => {
+  const { data } = await API.patch(`/photos/${id}/toggle`);
+  return data;
+};
+
+
+
+
+
 export default API;

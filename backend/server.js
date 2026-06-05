@@ -24,6 +24,8 @@ app.use("/api/works",  require("./routes/workRoutes"));
 app.use("/api/codings", require("./routes/codingRoutes"));
 app.use("/api/networks", require("./routes/networkRoutes"));
 app.use("/api/services",  require("./routes/Serviceroutes"));
+app.use("/api/photos",            require("./routes/photoRoutes"));
+app.use("/api/photo-categories",  require("./routes/photoCategoryRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -108,6 +110,27 @@ const seedNetworks = async () => {
 
 
 
+// ② Seed functions section-এ (seedNetworks এর পরে) যোগ করো:
+const seedPhotoCategories = async () => {
+  const PhotoCategory = require("./models/PhotoCategory");
+  const count = await PhotoCategory.countDocuments();
+  if (count > 0) return console.log(`ℹ️  PhotoCategories already seeded (${count}) — skip.`);
+  const data = require("./data/photoCategory.seed.json");
+  await PhotoCategory.insertMany(data);
+  console.log(`✅ PhotoCategories seeded — ${data.length} categories inserted.`);
+};
+
+const seedPhotos = async () => {
+  const Photo = require("./models/Photo");
+  const count = await Photo.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Photos already seeded (${count}) — skip.`);
+  const data = require("./data/photo.seed.json");
+  await Photo.insertMany(data);
+  console.log(`✅ Photos seeded — ${data.length} photos inserted.`);
+};
+
+
+
 
 
 // ── Start ────────────────────────────────────────────────────────
@@ -123,6 +146,8 @@ mongoose
     await seedWorks();
     await seedCodings();
     await seedNetworks();
+    await seedPhotoCategories();
+    await seedPhotos();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {

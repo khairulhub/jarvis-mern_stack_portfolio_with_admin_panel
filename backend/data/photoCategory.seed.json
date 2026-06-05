@@ -1,0 +1,6 @@
+[
+  { "name": "NETWORK",  "slug": "network",  "color": "#facc15", "order": 1, "isActive": true },
+  { "name": "CODING",   "slug": "coding",   "color": "#38bdf8", "order": 2, "isActive": true },
+  { "name": "CCTV",     "slug": "cctv",     "color": "#f87171", "order": 3, "isActive": true },
+  { "name": "CERT",     "slug": "cert",     "color": "#00ff88", "order": 4, "isActive": true }
+]

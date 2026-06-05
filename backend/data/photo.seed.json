@@ -1,0 +1,54 @@
+[
+  {
+    "title": "Campus Network Design",
+    "subtitle": "12-Floor University Topology",
+    "desc": "Designed and simulated a complete 12-floor university campus network using Cisco Packet Tracer with VLANs, DHCP, and inter-VLAN routing on a Layer 3 core switch.",
+    "tags": ["Cisco", "VLAN", "DHCP", "Packet Tracer"],
+    "category": "NETWORK",
+    "emoji": "🌐",
+    "color": "#facc15",
+    "image": "",
+    "height": 180,
+    "isActive": true,
+    "order": 1
+  },
+  {
+    "title": "LMS Dashboard",
+    "subtitle": "Laravel + Vue.js Project",
+    "desc": "Admin dashboard for the Learning Management System built with Laravel 11 and Vue.js. Covers full course, user, and payment management.",
+    "tags": ["Laravel", "Vue.js", "MySQL", "Bootstrap"],
+    "category": "CODING",
+    "emoji": "💻",
+    "color": "#38bdf8",
+    "image": "",
+    "height": 220,
+    "isActive": true,
+    "order": 2
+  },
+  {
+    "title": "CCTV Installation",
+    "subtitle": "Edge Tech BD — Fashion Tex",
+    "desc": "Commercial CCTV surveillance installation with IP cameras, NVR setup, cable routing, and remote access configuration at Fashion Tex.",
+    "tags": ["CCTV", "IP Camera", "NVR", "Access Control"],
+    "category": "CCTV",
+    "emoji": "📷",
+    "color": "#f87171",
+    "image": "",
+    "height": 160,
+    "isActive": true,
+    "order": 3
+  },
+  {
+    "title": "MTCNA Certificate",
+    "subtitle": "Mikrotik Certified Network Associate",
+    "desc": "Successfully completed MTCNA certification from CSL in 2026, covering RouterOS, PPPoE, DHCP, firewall, QoS, and BGP configurations.",
+    "tags": ["Mikrotik", "MTCNA", "RouterOS"],
+    "category": "CERT",
+    "emoji": "🏆",
+    "color": "#00ff88",
+    "image": "",
+    "height": 200,
+    "isActive": true,
+    "order": 4
+  }
+]

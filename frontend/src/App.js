@@ -28,6 +28,8 @@ import ExperienceAdmin from "./pages/admin/ExperienceAdmin";
 import ServiceAdmin from "./pages/admin/ServiceAdmin";
 import CodingAdmin from "./pages/admin/CodingAdmin";
 import NetworkAdmin from "./pages/admin/NetworkAdmin";
+import PhotoAdmin         from "./pages/admin/PhotoAdmin";
+import PhotoCategoryAdmin from "./pages/admin/PhotoCategoryAdmin";
 
 
 function App() {
@@ -87,6 +89,8 @@ function App() {
             <Route path="/admin/blogs"           element={<BlogsAdmin />} />
             <Route path="/admin/blogs/create"    element={<BlogForm />} />
             <Route path="/admin/blogs/edit/:id"  element={<BlogForm />} />
+            <Route path="/admin/gallery"            element={<PhotoAdmin />} />
+            <Route path="/admin/gallery-categories" element={<PhotoCategoryAdmin />} />
             <Route path="/admin/team"            element={<TeamAdmin />} />
             <Route path="/admin/settings"        element={<Settings />} />
             
