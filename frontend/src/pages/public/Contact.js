@@ -1,15 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getContactInfo } from "../../utils/api";
 
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxdqIjl2AbydBxMDlqVXOV2h4mM4ZfsEoDmLuZio7mZkpqvs4J2pFmSPboeYRWca-3j/exec"; // ← replace this (see setup below)
-
-const contactInfo = [
-  { icon: "ti-map-pin",       label: "LOCATION",     val: "Gazipur, Dhaka, Bangladesh",       href: null,                                          color: "#c8e8f8" },
-  { icon: "ti-mail",          label: "EMAIL",         val: "iubat21103033@gmail.com",           href: "mailto:iubat21103033@gmail.com",              color: "#c8e8f8" },
-  { icon: "ti-brand-github",  label: "GITHUB",        val: "github.com/Khairulhub",             href: "https://github.com/Khairulhub",              color: "#c8e8f8" },
-  { icon: "ti-brand-linkedin",label: "LINKEDIN",      val: "linkedin.com/in/khairulhub",        href: "https://linkedin.com/in/khairulhub",          color: "#c8e8f8" },
-  { icon: "ti-world",         label: "WEBSITE",       val: "engr-khairul.netlify.app",          href: "https://engr-khairul.netlify.app",            color: "#c8e8f8" },
-  { icon: "ti-clock",         label: "AVAILABILITY",  val: "● Open for Work",                  href: null,                                          color: "#00ff88" },
-];
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxdqIjl2AbydBxMDlqVXOV2h4mM4ZfsEoDmLuZio7mZkpqvs4J2pFmSPboeYRWca-3j/exec";
 
 const inputStyle = {
   width: "100%",
@@ -24,9 +16,28 @@ const inputStyle = {
   transition: "border-color 0.2s",
 };
 
+const buildContactItems = (info) => {
+  if (!info) return [];
+  return [
+    { icon: "ti-map-pin",        label: "LOCATION",     val: info.location,    href: null,             color: "#c8e8f8" },
+    { icon: "ti-mail",           label: "EMAIL",         val: info.email,       href: `mailto:${info.email}`, color: "#c8e8f8" },
+    { icon: "ti-brand-github",   label: "GITHUB",        val: info.github,      href: info.githubUrl,   color: "#c8e8f8" },
+    { icon: "ti-brand-linkedin", label: "LINKEDIN",      val: info.linkedin,    href: info.linkedinUrl, color: "#c8e8f8" },
+    { icon: "ti-world",          label: "WEBSITE",       val: info.website,     href: info.websiteUrl,  color: "#c8e8f8" },
+    { icon: "ti-clock",          label: "AVAILABILITY",  val: `● ${info.availability}`, href: null, color: "#00ff88" },
+  ];
+};
+
 const Contact = () => {
+  const [contactItems, setContactItems] = useState([]);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [status, setStatus] = useState("idle");
+
+  useEffect(() => {
+    getContactInfo()
+      .then((res) => setContactItems(buildContactItems(res.data)))
+      .catch(() => {});
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -37,12 +48,9 @@ const Contact = () => {
     try {
       await fetch(GOOGLE_SHEET_URL, {
         method: "POST",
-        mode: "no-cors",                       // required for Apps Script
+        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          submittedAt: new Date().toLocaleString(),
-        }),
+        body: JSON.stringify({ ...form, submittedAt: new Date().toLocaleString() }),
       });
       setStatus("success");
       setForm({ name: "", email: "", subject: "", message: "" });
@@ -73,14 +81,13 @@ const Contact = () => {
         {/* ── grid: info + form ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-          {/* ── LEFT: contact info ── */}
+          {/* ── LEFT: contact info from DB ── */}
           <div className="flex flex-col gap-3">
-
             <p style={{ fontSize: 13, color: "#6a9bbf", lineHeight: 1.8, marginBottom: 8 }}>
               Have a project, opportunity, or just want to say hi? Fill the form or reach out directly through any channel below.
             </p>
 
-            {contactInfo.map((item) => (
+            {contactItems.map((item) => (
               <div
                 key={item.label}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200"
@@ -118,25 +125,6 @@ const Contact = () => {
                 </div>
               </div>
             ))}
-
-            {/* terminal status box */}
-            {/* <div
-              className="rounded-xl p-4 mt-2"
-              style={{ background: "#020408", border: "1px solid rgba(0,229,255,0.1)", fontFamily: "'Share Tech Mono',monospace" }}
-            >
-              <div style={{ fontSize: 9, color: "#2a4a6a", letterSpacing: 3, marginBottom: 8 }}>// SYSTEM.STATUS</div>
-              {[
-                { key: "RESPONSE_TIME", val: "< 24 hours",     color: "#00ff88" },
-                { key: "STATUS",        val: "ONLINE",          color: "#00ff88" },
-                { key: "TIMEZONE",      val: "BST (UTC+6)",     color: "#00e5ff" },
-                { key: "LANGUAGE",      val: "Bengali, English",color: "#00e5ff" },
-              ].map((s) => (
-                <div key={s.key} className="flex items-center justify-between" style={{ marginBottom: 5 }}>
-                  <span style={{ fontSize: 10, color: "#2a4a6a" }}>{s.key}</span>
-                  <span style={{ fontSize: 10, color: s.color }}>{s.val}</span>
-                </div>
-              ))}
-            </div> */}
           </div>
 
           {/* ── RIGHT: form ── */}
@@ -148,150 +136,76 @@ const Contact = () => {
               // SEND MESSAGE
             </div>
 
-            {/* Name + Email row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>
-                  YOUR NAME *
-                </label>
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Md Khairul Islam"
-                  style={inputStyle}
+                <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>YOUR NAME *</label>
+                <input name="name" value={form.name} onChange={handleChange} placeholder="Md Khairul Islam" style={inputStyle}
                   onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.1)")}
-                />
+                  onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.1)")} />
               </div>
               <div>
-                <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>
-                  YOUR EMAIL *
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="you@email.com"
-                  style={inputStyle}
+                <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>YOUR EMAIL *</label>
+                <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="you@email.com" style={inputStyle}
                   onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.1)")}
-                />
+                  onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.1)")} />
               </div>
             </div>
 
-            {/* Subject */}
             <div>
-              <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>
-                SUBJECT
-              </label>
-              <input
-                name="subject"
-                value={form.subject}
-                onChange={handleChange}
-                placeholder="Project inquiry / Collaboration / Hire"
-                style={inputStyle}
+              <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>SUBJECT</label>
+              <input name="subject" value={form.subject} onChange={handleChange} placeholder="Project inquiry / Collaboration / Hire" style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
-                onBlur={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.1)")}
-              />
+                onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.1)")} />
             </div>
 
-            {/* Message */}
             <div>
-              <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>
-                MESSAGE *
-              </label>
-              <textarea
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                placeholder="Tell me about your project or how I can help..."
-                rows={5}
+              <label style={{ fontSize: 9, color: "#2a4a6a", fontFamily: "'Share Tech Mono',monospace", letterSpacing: 1, display: "block", marginBottom: 5 }}>MESSAGE *</label>
+              <textarea name="message" value={form.message} onChange={handleChange} placeholder="Tell me about your project or how I can help..." rows={5}
                 style={{ ...inputStyle, resize: "vertical", minHeight: 110 }}
                 onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
-                onBlur={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.1)")}
-              />
+                onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.1)")} />
             </div>
 
-            {/* Submit button */}
             <button
               onClick={handleSubmit}
               disabled={status === "loading"}
               style={{
-                width: "100%",
-                padding: "11px 28px",
+                width: "100%", padding: "11px 28px",
                 background: status === "success" ? "rgba(0,255,136,0.1)" : "rgba(0,60,110,0.8)",
                 border: `1px solid ${status === "success" ? "#00ff88" : status === "error" ? "#f87171" : "#00e5ff"}`,
                 color: status === "success" ? "#00ff88" : status === "error" ? "#f87171" : "#00e5ff",
-                fontFamily: "'Orbitron',sans-serif",
-                fontSize: 11,
-                letterSpacing: 2,
-                borderRadius: 4,
+                fontFamily: "'Orbitron',sans-serif", fontSize: 11, letterSpacing: 2, borderRadius: 4,
                 cursor: status === "loading" ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                transition: "all 0.3s",
-                opacity: status === "loading" ? 0.7 : 1,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                transition: "all 0.3s", opacity: status === "loading" ? 0.7 : 1,
               }}
-              onMouseEnter={(e) => {
-                if (status === "idle") {
-                  e.currentTarget.style.background = "rgba(0,80,140,0.9)";
-                  e.currentTarget.style.boxShadow = "0 0 20px rgba(0,229,255,0.15)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (status === "idle") {
-                  e.currentTarget.style.background = "rgba(0,60,110,0.8)";
-                  e.currentTarget.style.boxShadow = "none";
-                }
-              }}
+              onMouseEnter={(e) => { if (status === "idle") { e.currentTarget.style.background = "rgba(0,80,140,0.9)"; e.currentTarget.style.boxShadow = "0 0 20px rgba(0,229,255,0.15)"; } }}
+              onMouseLeave={(e) => { if (status === "idle") { e.currentTarget.style.background = "rgba(0,60,110,0.8)"; e.currentTarget.style.boxShadow = "none"; } }}
             >
-              {status === "loading" && (
-                <i className="ti ti-loader-2" style={{ fontSize: 14, animation: "spin 1s linear infinite" }} />
-              )}
+              {status === "loading" && <i className="ti ti-loader-2" style={{ fontSize: 14, animation: "spin 1s linear infinite" }} />}
               {status === "success" && <i className="ti ti-check" style={{ fontSize: 14 }} />}
               {status === "error"   && <i className="ti ti-alert-circle" style={{ fontSize: 14 }} />}
               {status === "idle"    && <i className="ti ti-send" style={{ fontSize: 14 }} />}
-
-              {status === "loading" ? "TRANSMITTING..."
-                : status === "success" ? "MESSAGE SENT!"
-                : status === "error"   ? "FAILED — RETRY"
-                : "SEND MESSAGE"}
+              {status === "loading" ? "TRANSMITTING..." : status === "success" ? "MESSAGE SENT!" : status === "error" ? "FAILED — RETRY" : "SEND MESSAGE"}
             </button>
 
-            {/* success message */}
             {status === "success" && (
-              <div
-                className="flex items-center gap-2 px-4 py-3 rounded-lg"
-                style={{ background: "rgba(0,255,136,0.05)", border: "1px solid rgba(0,255,136,0.2)" }}
-              >
+              <div className="flex items-center gap-2 px-4 py-3 rounded-lg" style={{ background: "rgba(0,255,136,0.05)", border: "1px solid rgba(0,255,136,0.2)" }}>
                 <i className="ti ti-circle-check" style={{ fontSize: 16, color: "#00ff88", flexShrink: 0 }} />
-                <span style={{ fontSize: 11, color: "#00ff88", fontFamily: "'Share Tech Mono',monospace" }}>
-                  Message received! I'll respond within 24 hours.
-                </span>
+                <span style={{ fontSize: 11, color: "#00ff88", fontFamily: "'Share Tech Mono',monospace" }}>Message received! I'll respond within 24 hours.</span>
               </div>
             )}
-
             {status === "error" && (
-              <div
-                className="flex items-center gap-2 px-4 py-3 rounded-lg"
-                style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.2)" }}
-              >
+              <div className="flex items-center gap-2 px-4 py-3 rounded-lg" style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.2)" }}>
                 <i className="ti ti-alert-circle" style={{ fontSize: 16, color: "#f87171", flexShrink: 0 }} />
-                <span style={{ fontSize: 11, color: "#f87171", fontFamily: "'Share Tech Mono',monospace" }}>
-                  Submission failed. Please email directly at iubat21103033@gmail.com
-                </span>
+                <span style={{ fontSize: 11, color: "#f87171", fontFamily: "'Share Tech Mono',monospace" }}>Submission failed. Please email directly.</span>
               </div>
             )}
-
           </div>
         </div>
       </div>
     </section>
   );
-}
+};
 
 export default Contact;

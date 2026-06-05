@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiGithub, FiTwitter, FiLinkedin } from "react-icons/fi";
+import { getContactInfo } from "../../utils/api";
 
 const navLinks = [
   { to: "/",           label: "HOME"       },
@@ -12,15 +13,30 @@ const navLinks = [
   { to: "/contact",    label: "CONTACT"    },
 ];
 
-const socials = [
-  { icon: "ti-brand-github",   href: "https://github.com/khairulhub",       label: "github.com/khairulhub"    },
-  { icon: "ti-brand-linkedin", href: "https://linkedin.com/in/khairulhub",  label: "linkedin.com/in/khairulhub" },
-  { icon: "ti-mail",           href: "mailto:khairul@khairulhub.com",       label: "khairul@khairulhub.com"   },
-  { icon: "ti-map-pin",        href: "#",                                   label: "Dhaka, Bangladesh"        },
-];
 
 const Footer = () => {
   const year = new Date().getFullYear();
+    const [info, setInfo] = useState(null);
+  
+    useEffect(() => {
+      getContactInfo()
+        .then((res) => setInfo(res.data))
+        .catch(() => {});
+    }, []);
+  
+    const socials = info
+      ? [
+          { icon: "ti-brand-github",   href: info.githubUrl,   label: info.github   },
+          { icon: "ti-brand-linkedin", href: info.linkedinUrl, label: info.linkedin  },
+          { icon: "ti-mail",           href: `mailto:${info.email}`, label: info.email },
+          { icon: "ti-map-pin",        href: "#",              label: info.location  },
+        ]
+      : [
+          { icon: "ti-brand-github",   href: "https://github.com/khairulhub",      label: "github.com/khairulhub"     },
+          { icon: "ti-brand-linkedin", href: "https://linkedin.com/in/khairulhub", label: "linkedin.com/in/khairulhub" },
+          { icon: "ti-mail",           href: "mailto:iubat21103033@gmail.com",      label: "iubat21103033@gmail.com"   },
+          { icon: "ti-map-pin",        href: "#",                                   label: "Dhaka, Bangladesh"         },
+        ];
   return (
     <footer
       className="relative z-[2]"

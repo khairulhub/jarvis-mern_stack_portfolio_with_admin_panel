@@ -30,6 +30,7 @@ import CodingAdmin from "./pages/admin/CodingAdmin";
 import NetworkAdmin from "./pages/admin/NetworkAdmin";
 import PhotoAdmin         from "./pages/admin/PhotoAdmin";
 import PhotoCategoryAdmin from "./pages/admin/PhotoCategoryAdmin";
+import ContactInfoAdmin from "./pages/admin/ContactInfoAdmin";
 
 
 function App() {
@@ -92,6 +93,7 @@ function App() {
             <Route path="/admin/gallery"            element={<PhotoAdmin />} />
             <Route path="/admin/gallery-categories" element={<PhotoCategoryAdmin />} />
             <Route path="/admin/team"            element={<TeamAdmin />} />
+            <Route path="/admin/contact-info" element={<ContactInfoAdmin />} />
             <Route path="/admin/settings"        element={<Settings />} />
             
           </Route>

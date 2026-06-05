@@ -385,6 +385,17 @@ export const togglePhoto = async (id) => {
 };
 
 
+// ─── ContactInfo ──────────────────────────────────────────────
+export const getContactInfo = async () => {
+  const { data } = await API.get("/contactinfo");
+  return data;
+};
+
+export const updateContactInfo = async (infoData) => {
+  const { data } = await API.put("/contactinfo", infoData);
+  return data;
+};
+
 
 
 

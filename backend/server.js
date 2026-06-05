@@ -26,6 +26,7 @@ app.use("/api/networks", require("./routes/networkRoutes"));
 app.use("/api/services",  require("./routes/Serviceroutes"));
 app.use("/api/photos",            require("./routes/photoRoutes"));
 app.use("/api/photo-categories",  require("./routes/photoCategoryRoutes"));
+app.use("/api/contactinfo", require("./routes/contactInfoRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -129,7 +130,14 @@ const seedPhotos = async () => {
   console.log(`✅ Photos seeded — ${data.length} photos inserted.`);
 };
 
-
+const seedContactInfo = async () => {
+  const ContactInfo = require("./models/ContactInfo");
+  const exists = await ContactInfo.findById("contact_main");
+  if (exists) return console.log("ℹ️  ContactInfo already seeded — skip.");
+  const data = require("./data/contactinfo.seed.json");
+  await ContactInfo.create(data);
+  console.log("✅ ContactInfo seeded.");
+};
 
 
 
@@ -148,6 +156,7 @@ mongoose
     await seedNetworks();
     await seedPhotoCategories();
     await seedPhotos();
+    await seedContactInfo();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {
