@@ -23,6 +23,8 @@ import BlogForm from "./pages/admin/BlogForm";
 import TeamAdmin from "./pages/admin/TeamAdmin";
 import Settings from "./pages/admin/Settings";
 import HeroAdmin from "./pages/admin/HeroAdmin";
+import AboutInfoAdmin from "./pages/admin/AboutInfoAdmin";
+import ClientAdmin from "./pages/admin/ClientAdmin";
 import WorksAdmin from "./pages/admin/WorksAdmin";
 import ExperienceAdmin from "./pages/admin/ExperienceAdmin";
 import ServiceAdmin from "./pages/admin/ServiceAdmin";
@@ -81,7 +83,9 @@ function App() {
           {/* ── Protected Admin ────────────────────────── */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/dashboard"       element={<Dashboard />} />
-<Route path="/admin/hero" element={<HeroAdmin />} />
+            <Route path="/admin/hero" element={<HeroAdmin />} />  //hero section
+            <Route path="/admin/about" element={<AboutInfoAdmin />} />  // about  
+            <Route path="/admin/clients" element={<ClientAdmin />} />
             <Route path="/admin/experiences"     element={<ExperienceAdmin />} />
             <Route path="/admin/services" element={<ServiceAdmin />} />
             <Route path="/admin/works" element={<WorksAdmin />} />

@@ -20,6 +20,7 @@ app.use("/api/experiences", require("./routes/experienceRoutes"));
 app.use("/api/team",   require("./routes/teamRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/hero",   require("./routes/heroRoutes"));
+app.use("/api/aboutinfo", require("./routes/aboutInfoRoutes"));//about info route
 app.use("/api/works",  require("./routes/workRoutes"));
 app.use("/api/codings", require("./routes/codingRoutes"));
 app.use("/api/networks", require("./routes/networkRoutes"));
@@ -28,6 +29,7 @@ app.use("/api/photos",            require("./routes/photoRoutes"));
 app.use("/api/photo-categories",  require("./routes/photoCategoryRoutes"));
 app.use("/api/contactinfo", require("./routes/contactInfoRoutes"));
 app.use("/api/footer-brand", require("./routes/footerBrandRoutes"));
+app.use("/api/clients", require("./routes/clientRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -52,6 +54,17 @@ const seedHero = async () => {
   console.log("✅ Hero seeded.");
 };
 
+// ② Seed about info section  যোগ করো:
+const seedAboutInfo = async () => {
+  const AboutInfo = require("./models/AboutInfo");
+  const exists = await AboutInfo.findById("about_main");
+  if (exists) return console.log("ℹ️  AboutInfo already seeded — skip.");
+  const data = require("./data/aboutinfo.seed.json");
+  await AboutInfo.create(data);
+  console.log("✅ AboutInfo seeded.");
+};
+
+
 const seedExperiences = async () => {
   const Experience = require("./models/Experience"); 
   const experienceSeedData = require("./data/experience.seed.json");
@@ -61,6 +74,20 @@ const seedExperiences = async () => {
   console.log(`✅ Experiences seeded — ${experienceSeedData.length} entries inserted.`);
 
 }
+
+ 
+// ── 2. seedClients function যোগ করো (seedFooterBrand এর পরে) ──
+const seedClients = async () => {
+  const Client = require("./models/Client");
+  const count = await Client.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Clients already seeded (${count}) — skip.`);
+  const data = require("./data/client.seed.json");
+  await Client.insertMany(data);
+  console.log(`✅ Clients seeded — ${data.length} clients inserted.`);
+};
+
+
+
 
 const seedServices = async () => {
   const Service = require("./models/Service");
@@ -159,7 +186,9 @@ mongoose
   .then(async () => {
     console.log("✅ MongoDB connected");
     await seedHero();
+    await seedAboutInfo();
     await seedExperiences();
+    await seedClients();
     await seedServices();
     await seedWorks();
     await seedCodings();

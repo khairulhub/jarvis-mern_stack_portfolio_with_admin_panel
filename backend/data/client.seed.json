@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Edge Tech BD",
+    "location": "Dhaka, Bangladesh",
+    "details": "CCTV surveillance systems, access control setup, and intercom infrastructure for commercial and industrial sites including Mingle, CDC Eastern Housing, and Fashion Tex.",
+    "logo": "",
+    "icon": "ti-building",
+    "color": "#facc15",
+    "colorBg": "rgba(250,204,21,0.08)",
+    "colorBorder": "rgba(250,204,21,0.25)",
+    "isActive": true,
+    "order": 1
+  },
+  {
+    "name": "Code Tree It Ltd",
+    "location": "Dhaka, Bangladesh",
+    "details": "Full-featured Learning Management System (LMS) built with Laravel 11 — course management, user roles, payment integration, and admin dashboard.",
+    "logo": "",
+    "icon": "ti-code",
+    "color": "#00e5ff",
+    "colorBg": "rgba(0,229,255,0.08)",
+    "colorBorder": "rgba(0,229,255,0.25)",
+    "isActive": true,
+    "order": 2
+  },
+  {
+    "name": "4Axiz It Ltd",
+    "location": "Dhaka, Bangladesh",
+    "details": "Human Resource Management (HRM) software — employee records, payroll, attendance tracking, and admin modules built from scratch with Laravel.",
+    "logo": "",
+    "icon": "ti-terminal-2",
+    "color": "#a855f7",
+    "colorBg": "rgba(168,85,247,0.08)",
+    "colorBorder": "rgba(168,85,247,0.25)",
+    "isActive": true,
+    "order": 3
+  },
+  {
+    "name": "Fashion Tex",
+    "location": "Gazipur, Bangladesh",
+    "details": "Commercial CCTV surveillance installation — IP cameras, NVR setup, cable routing, and remote access configuration across the factory floor.",
+    "logo": "",
+    "icon": "ti-building-factory-2",
+    "color": "#f87171",
+    "colorBg": "rgba(248,113,113,0.08)",
+    "colorBorder": "rgba(248,113,113,0.25)",
+    "isActive": true,
+    "order": 4
+  },
+  {
+    "name": "CDC Eastern Housing",
+    "location": "Dhaka, Bangladesh",
+    "details": "Residential complex security system — CCTV network design, IP intercom, and access control for multi-floor housing complex.",
+    "logo": "",
+    "icon": "ti-home",
+    "color": "#00ff88",
+    "colorBg": "rgba(0,255,136,0.08)",
+    "colorBorder": "rgba(0,255,136,0.25)",
+    "isActive": true,
+    "order": 5
+  },
+  {
+    "name": "Mingle",
+    "location": "Dhaka, Bangladesh",
+    "details": "Office network & CCTV setup — structured cabling, IP camera installation, and access point configuration for a modern co-working space.",
+    "logo": "",
+    "icon": "ti-users",
+    "color": "#ff8c00",
+    "colorBg": "rgba(255,140,0,0.08)",
+    "colorBorder": "rgba(255,140,0,0.25)",
+    "isActive": true,
+    "order": 6
+  }
+]

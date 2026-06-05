@@ -1,0 +1,18 @@
+{
+  "_id": "about_main",
+  "paragraph1": "I am a passionate <strong>Full Stack Developer</strong> and <strong>Network Engineer</strong> based in Dhaka, Bangladesh. I build modern, scalable web applications and design efficient network infrastructures.",
+  "paragraph2": "With expertise in MERN Stack, PHP/Laravel, .NET, and Cisco networking, I bring both frontend creativity and backend robustness to every project.",
+  "paragraph3": "My approach combines clean code practices with performance-driven architecture, ensuring every solution is both functional and maintainable.",
+  "infoCards": [
+    { "icon": "ti-user",         "label": "Name",     "value": "Md Khairul Islam",        "order": 1 },
+    { "icon": "ti-map-pin",      "label": "Location", "value": "Gazipur, Bangladesh",     "order": 2 },
+    { "icon": "ti-school",       "label": "Degree",   "value": "B.Sc. Computer Science",  "order": 3 },
+    { "icon": "ti-device-laptop","label": "Status",   "value": "Available for Hire",      "order": 4 }
+  ],
+  "stats": [
+    { "num": "3+",   "label": "YEARS EXP",  "clickable": true,  "link": "", "order": 1 },
+    { "num": "50+",  "label": "PROJECTS",   "clickable": false, "link": "https://github.com/Khairulhub", "order": 2 },
+    { "num": "15+",  "label": "CLIENTS",    "clickable": false, "clientStat": true, "link": "", "order": 3 },
+    { "num": "100%", "label": "DEDICATION", "clickable": false, "link": "", "order": 4 }
+  ]
+}

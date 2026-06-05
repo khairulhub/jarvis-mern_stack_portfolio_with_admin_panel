@@ -142,35 +142,14 @@ export const updateHero = async (heroData) => {
 };
 
 
- 
-// ─── Services ─────────────────────────────────────────────────
-export const getPublicServices = async () => {
-  const { data } = await API.get("/services");
+// ─── AboutInfo ────────────────────────────────────────────────
+export const getAboutInfo = async () => {
+  const { data } = await API.get("/aboutinfo");
   return data;
 };
- 
-export const getAdminServices = async () => {
-  const { data } = await API.get("/services/admin/all");
-  return data;
-};
- 
-export const createService = async (serviceData) => {
-  const { data } = await API.post("/services", serviceData);
-  return data;
-};
- 
-export const updateService = async (id, serviceData) => {
-  const { data } = await API.put(`/services/${id}`, serviceData);
-  return data;
-};
- 
-export const deleteService = async (id) => {
-  const { data } = await API.delete(`/services/${id}`);
-  return data;
-};
- 
-export const toggleService = async (id) => {
-  const { data } = await API.patch(`/services/${id}/toggle`);
+
+export const updateAboutInfo = async (infoData) => {
+  const { data } = await API.put("/aboutinfo", infoData);
   return data;
 };
 
@@ -203,9 +182,75 @@ export const deleteExperience = async (id) => {
 };
 
 
+// ─── Clients ──────────────────────────────────────────────
+export const getPublicClients = async () => {
+  const { data } = await API.get("/clients");
+  return data;
+};
+ 
+export const getAdminClients = async () => {
+  const { data } = await API.get("/clients/admin/all");
+  return data;
+};
+ 
+export const createClient = async (clientData) => {
+  const { data } = await API.post("/clients", clientData);
+  return data;
+};
+ 
+export const updateClient = async (id, clientData) => {
+  const { data } = await API.put(`/clients/${id}`, clientData);
+  return data;
+};
+ 
+export const deleteClient = async (id) => {
+  const { data } = await API.delete(`/clients/${id}`);
+  return data;
+};
+ 
+export const toggleClient = async (id) => {
+  const { data } = await API.patch(`/clients/${id}/toggle`);
+  return data;
+};
+ 
 
 
 
+
+
+
+
+ 
+// ─── Services ─────────────────────────────────────────────────
+export const getPublicServices = async () => {
+  const { data } = await API.get("/services");
+  return data;
+};
+ 
+export const getAdminServices = async () => {
+  const { data } = await API.get("/services/admin/all");
+  return data;
+};
+ 
+export const createService = async (serviceData) => {
+  const { data } = await API.post("/services", serviceData);
+  return data;
+};
+ 
+export const updateService = async (id, serviceData) => {
+  const { data } = await API.put(`/services/${id}`, serviceData);
+  return data;
+};
+ 
+export const deleteService = async (id) => {
+  const { data } = await API.delete(`/services/${id}`);
+  return data;
+};
+ 
+export const toggleService = async (id) => {
+  const { data } = await API.patch(`/services/${id}/toggle`);
+  return data;
+};
 
 
 // ─── Works ───────────────────────────────────────────────────

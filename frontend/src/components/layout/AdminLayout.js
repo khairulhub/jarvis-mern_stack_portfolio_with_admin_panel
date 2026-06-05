@@ -10,6 +10,8 @@ import {
 const navItems = [
   { path: "/admin/dashboard", icon: HiOutlineHome, label: "Dashboard" },
    { path: "/admin/hero",      icon: HiOutlinePhotograph,   label: "Hero Section" }, //new
+   { path: "/admin/about", icon: HiOutlineUsers, label: "About Section" },
+  { path: "/admin/clients", icon: HiOutlineCollection, label: "Clients" },
 { path: "/admin/experiences", icon: HiOutlineBriefcase,    label: "Experiences"  }, //new
   { path: "/admin/services", icon: HiOutlineCollection, label: "Services" }, //new
   { path: "/admin/codings",     icon: HiOutlineCode,         label: "Coding Ref"   }, //new
