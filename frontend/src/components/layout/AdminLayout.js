@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   HiOutlineHome, HiOutlineDocumentText, HiOutlineUsers,
   HiOutlineLogout, HiOutlineMenu, HiOutlineX, HiOutlineCog, HiOutlinePhotograph,
-  HiOutlineCode, HiOutlineBriefcase, HiOutlineCollection,HiOutlineGlobe,HiOutlineTag,HiOutlineMail,
+  HiOutlineCode, HiOutlineBriefcase, HiOutlineCollection,HiOutlineGlobe,HiOutlineTag,HiOutlineMail,HiOutlineTemplate,
 } from "react-icons/hi";
 
 const navItems = [
@@ -21,6 +21,7 @@ const navItems = [
  { path: "/admin/gallery-categories", icon: HiOutlineTag,        label: "Photo Categories" },
  { path: "/admin/gallery",            icon: HiOutlinePhotograph, label: "Gallery"          },
   { path: "/admin/contact-info", icon: HiOutlineMail,        label: "Contact Info" },
+  { path: "/admin/footer-brand",  icon: HiOutlineTemplate,   label: "Footer & Navbar Brand" },
  
   { path: "/admin/settings", icon: HiOutlineCog, label: "Settings" },
 ];

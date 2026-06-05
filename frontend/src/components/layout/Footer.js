@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiGithub, FiTwitter, FiLinkedin } from "react-icons/fi";
-import { getContactInfo } from "../../utils/api";
+import { getContactInfo, getFooterBrand } from "../../utils/api";
 
 const navLinks = [
   { to: "/",           label: "HOME"       },
@@ -13,30 +12,95 @@ const navLinks = [
   { to: "/contact",    label: "CONTACT"    },
 ];
 
+const DEFAULT_BRAND = {
+  logoText:      "K",
+  brandName:     "KHAIRULHUB",
+  taglineText:   "Full Stack Developer & Network Engineer based in Dhaka, Bangladesh. Building robust apps & networks.",
+  copyrightText: "© 2025 KhairulHub. All rights reserved.",
+  imageUrl:      "",
+  showImage:     false,
+  imageOnly:     false,
+};
 
 const Footer = () => {
-  const year = new Date().getFullYear();
-    const [info, setInfo] = useState(null);
-  
-    useEffect(() => {
-      getContactInfo()
-        .then((res) => setInfo(res.data))
-        .catch(() => {});
-    }, []);
-  
-    const socials = info
-      ? [
-          { icon: "ti-brand-github",   href: info.githubUrl,   label: info.github   },
-          { icon: "ti-brand-linkedin", href: info.linkedinUrl, label: info.linkedin  },
-          { icon: "ti-mail",           href: `mailto:${info.email}`, label: info.email },
-          { icon: "ti-map-pin",        href: "#",              label: info.location  },
-        ]
-      : [
-          { icon: "ti-brand-github",   href: "https://github.com/khairulhub",      label: "github.com/khairulhub"     },
-          { icon: "ti-brand-linkedin", href: "https://linkedin.com/in/khairulhub", label: "linkedin.com/in/khairulhub" },
-          { icon: "ti-mail",           href: "mailto:iubat21103033@gmail.com",      label: "iubat21103033@gmail.com"   },
-          { icon: "ti-map-pin",        href: "#",                                   label: "Dhaka, Bangladesh"         },
-        ];
+  const [info,  setInfo]  = useState(null);
+  const [brand, setBrand] = useState(DEFAULT_BRAND);
+
+  useEffect(() => {
+    getContactInfo()
+      .then((res) => setInfo(res.data))
+      .catch(() => {});
+
+    getFooterBrand()
+      .then((res) => { if (res.success && res.data) setBrand(res.data); })
+      .catch(() => {});
+  }, []);
+
+  const socials = info
+    ? [
+        { icon: "ti-brand-github",   href: info.githubUrl,          label: info.github   },
+        { icon: "ti-brand-linkedin", href: info.linkedinUrl,        label: info.linkedin  },
+        { icon: "ti-mail",           href: `mailto:${info.email}`,  label: info.email     },
+        { icon: "ti-map-pin",        href: "#",                     label: info.location  },
+      ]
+    : [
+        { icon: "ti-brand-github",   href: "https://github.com/khairulhub",      label: "github.com/khairulhub"     },
+        { icon: "ti-brand-linkedin", href: "https://linkedin.com/in/khairulhub", label: "linkedin.com/in/khairulhub" },
+        { icon: "ti-mail",           href: "mailto:iubat21103033@gmail.com",      label: "iubat21103033@gmail.com"   },
+        { icon: "ti-map-pin",        href: "#",                                   label: "Dhaka, Bangladesh"         },
+      ];
+
+  /* ── Logo rendering logic ── */
+  const renderLogo = () => {
+    // imageOnly = true → পুরো logo section এর বদলে শুধু image
+    if (brand.imageOnly && brand.imageUrl) {
+      return (
+        <img
+          src={brand.imageUrl}
+          alt={brand.brandName || "Logo"}
+          style={{ maxHeight: 44, maxWidth: 160, objectFit: "contain" }}
+        />
+      );
+    }
+
+    // showImage = true && imageUrl আছে → circle এর বদলে image, তারপর brandName
+    const logoIcon = brand.showImage && brand.imageUrl ? (
+      <img
+        src={brand.imageUrl}
+        alt={brand.logoText || "Logo"}
+        style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover", border: "2px solid #00e5ff", flexShrink: 0 }}
+      />
+    ) : (
+      <div
+        className="flex items-center justify-center flex-shrink-0"
+        style={{
+          width: 36, height: 36, borderRadius: "50%",
+          border: "2px solid #00e5ff", color: "#00e5ff",
+          fontSize: 13, fontWeight: 900,
+          fontFamily: "'Orbitron', sans-serif",
+          animation: "spin 8s linear infinite",
+        }}
+      >
+        {brand.logoText || "K"}
+      </div>
+    );
+
+    return (
+      <div className="flex items-center gap-2.5">
+        {logoIcon}
+        <span
+          style={{
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: 16, fontWeight: 900,
+            color: "#00e5ff", letterSpacing: 3,
+          }}
+        >
+          {brand.brandName || "KHAIRULHUB"}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <footer
       className="relative z-[2]"
@@ -46,8 +110,7 @@ const Footer = () => {
       <div
         style={{
           height: 1,
-          background:
-            "linear-gradient(90deg,transparent,rgba(0,229,255,0.35),transparent)",
+          background: "linear-gradient(90deg,transparent,rgba(0,229,255,0.35),transparent)",
         }}
       />
 
@@ -58,74 +121,36 @@ const Footer = () => {
           {/* col 1 — brand */}
           <div className="flex flex-col items-center sm:items-start gap-4">
             {/* logo */}
-            <div className="flex items-center gap-2.5">
-              <div
-                className="flex items-center justify-center flex-shrink-0"
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  border: "2px solid #00e5ff",
-                  color: "#00e5ff",
-                  fontSize: 13,
-                  fontWeight: 900,
-                  fontFamily: "'Orbitron', sans-serif",
-                  animation: "spin 8s linear infinite",
-                }}
-              >
-                K
-              </div>
-              <span
-                style={{
-                  fontFamily: "'Orbitron', sans-serif",
-                  fontSize: 16,
-                  fontWeight: 900,
-                  color: "#00e5ff",
-                  letterSpacing: 3,
-                }}
-              >
-                KHAIRULHUB
-              </span>
-            </div>
+            {renderLogo()}
 
+            {/* tagline */}
             <p
               className="text-center sm:text-left"
               style={{
-                fontSize: 12,
-                color: "#2a4a6a",
+                fontSize: 12, color: "#2a4a6a",
                 fontFamily: "'Share Tech Mono', monospace",
-                lineHeight: 1.8,
-                maxWidth: 230,
+                lineHeight: 1.8, maxWidth: 230,
               }}
             >
-              Full Stack Developer &amp; Network Engineer based in Dhaka,
-              Bangladesh. Building robust apps &amp; networks.
+              {brand.taglineText}
             </p>
 
             {/* online badge */}
             <div
               className="flex items-center gap-1.5 px-3 py-1 rounded-full"
-              style={{
-                border: "1px solid rgba(0,255,136,0.3)",
-                background: "rgba(0,255,136,0.05)",
-              }}
+              style={{ border: "1px solid rgba(0,255,136,0.3)", background: "rgba(0,255,136,0.05)" }}
             >
               <div
                 style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "#00ff88",
-                  boxShadow: "0 0 8px #00ff88",
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#00ff88", boxShadow: "0 0 8px #00ff88",
                   animation: "pulse 1.5s ease-in-out infinite",
                 }}
               />
               <span
                 style={{
-                  fontSize: 9,
-                  color: "#00ff88",
-                  fontFamily: "'Share Tech Mono', monospace",
-                  letterSpacing: 1,
+                  fontSize: 9, color: "#00ff88",
+                  fontFamily: "'Share Tech Mono', monospace", letterSpacing: 1,
                 }}
               >
                 ALL SYSTEMS OPERATIONAL
@@ -137,11 +162,8 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:items-start gap-2">
             <div
               style={{
-                fontSize: 10,
-                color: "#2a4a6a",
-                letterSpacing: 3,
-                fontFamily: "'Share Tech Mono', monospace",
-                marginBottom: 8,
+                fontSize: 10, color: "#2a4a6a", letterSpacing: 3,
+                fontFamily: "'Share Tech Mono', monospace", marginBottom: 8,
               }}
             >
               // NAVIGATE
@@ -152,10 +174,8 @@ const Footer = () => {
                 to={to}
                 className="no-underline transition-colors duration-200"
                 style={{
-                  fontSize: 11,
-                  color: "#6a9bbf",
-                  fontFamily: "'Share Tech Mono', monospace",
-                  letterSpacing: 2,
+                  fontSize: 11, color: "#6a9bbf",
+                  fontFamily: "'Share Tech Mono', monospace", letterSpacing: 2,
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#00e5ff")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#6a9bbf")}
@@ -169,11 +189,8 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:items-start gap-2">
             <div
               style={{
-                fontSize: 10,
-                color: "#2a4a6a",
-                letterSpacing: 3,
-                fontFamily: "'Share Tech Mono', monospace",
-                marginBottom: 8,
+                fontSize: 10, color: "#2a4a6a", letterSpacing: 3,
+                fontFamily: "'Share Tech Mono', monospace", marginBottom: 8,
               }}
             >
               // CONNECT
@@ -185,11 +202,7 @@ const Footer = () => {
                 target={href && href.startsWith("http") ? "_blank" : undefined}
                 rel={href && href.startsWith("http") ? "noreferrer" : undefined}
                 className="flex items-center gap-2 no-underline transition-colors duration-200"
-                style={{
-                  fontSize: 11,
-                  color: "#6a9bbf",
-                  fontFamily: "'Share Tech Mono', monospace",
-                }}
+                style={{ fontSize: 11, color: "#6a9bbf", fontFamily: "'Share Tech Mono', monospace" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#00e5ff")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#6a9bbf")}
               >
@@ -201,36 +214,23 @@ const Footer = () => {
         </div>
 
         {/* divider */}
-        <div
-          style={{
-            height: 1,
-            background: "rgba(0,229,255,0.07)",
-            margin: "36px 0 24px",
-          }}
-        />
+        <div style={{ height: 1, background: "rgba(0,229,255,0.07)", margin: "36px 0 24px" }} />
 
         {/* bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <p
             style={{
-              fontSize: 10,
-              color: "#2a4a6a",
-              fontFamily: "'Share Tech Mono', monospace",
-              letterSpacing: 1,
+              fontSize: 10, color: "#2a4a6a",
+              fontFamily: "'Share Tech Mono', monospace", letterSpacing: 1,
             }}
           >
-            © 2025 KhairulHub. All rights reserved.
+            {brand.copyrightText}
           </p>
-          
+
           <a
             href="#home"
             className="flex items-center gap-1.5 no-underline transition-colors duration-200"
-            style={{
-              fontSize: 10,
-              color: "#2a4a6a",
-              fontFamily: "'Share Tech Mono', monospace",
-              letterSpacing: 1,
-            }}
+            style={{ fontSize: 10, color: "#2a4a6a", fontFamily: "'Share Tech Mono', monospace", letterSpacing: 1 }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#00e5ff")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "#2a4a6a")}
           >

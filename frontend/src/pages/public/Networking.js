@@ -13,7 +13,7 @@ const NET_SKILLS = [
   { name: "Network Security",          pct: 78 },
 ];
 
-const topics = [
+const TOPICS_FALLBACK = [
   /* ── 1. ROUTER CONFIG ──────────────────────────────── */
   {
     id: 1,
@@ -636,11 +636,11 @@ function NetworkModal({ topic: t, onClose }) {
           setTopics(res.data);
         } else {
           // fallback: show 1 default topic from hardcoded array
-          setTopics([topics_fallback[0]]);
+          setTopics(TOPICS_FALLBACK);
         }
       } catch {
         // DB connect না হলে hardcoded 1st topic দেখাবে
-        setTopics([topics_fallback[0]]);
+        setTopics(TOPICS_FALLBACK);
       } finally {
         setLoading(false);
       }

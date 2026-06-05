@@ -397,6 +397,15 @@ export const updateContactInfo = async (infoData) => {
 };
 
 
+export const getFooterBrand = async () => {
+  const { data } = await API.get("/footer-brand");
+  return data;
+};
+
+export const updateFooterBrand = async (brandData) => {
+  const { data } = await API.put("/footer-brand", brandData);
+  return data;
+};
 
 
 export default API;

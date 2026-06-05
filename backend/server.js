@@ -27,6 +27,7 @@ app.use("/api/services",  require("./routes/Serviceroutes"));
 app.use("/api/photos",            require("./routes/photoRoutes"));
 app.use("/api/photo-categories",  require("./routes/photoCategoryRoutes"));
 app.use("/api/contactinfo", require("./routes/contactInfoRoutes"));
+app.use("/api/footer-brand", require("./routes/footerBrandRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -140,6 +141,15 @@ const seedContactInfo = async () => {
 };
 
 
+const seedFooterBrand = async () => {
+  const FooterBrand = require("./models/FooterBrand");
+  const exists = await FooterBrand.findById("footer_brand");
+  if (exists) return console.log("ℹ️  FooterBrand already seeded — skip.");
+  const data = require("./data/footerBrand.seed.json");
+  await FooterBrand.create(data);
+  console.log("✅ FooterBrand seeded.");
+};
+
 
 // ── Start ────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
@@ -157,6 +167,7 @@ mongoose
     await seedPhotoCategories();
     await seedPhotos();
     await seedContactInfo();
+    await seedFooterBrand();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {
