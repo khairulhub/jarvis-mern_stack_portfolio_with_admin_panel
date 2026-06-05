@@ -37,18 +37,24 @@ const useVisitorStats = () => {
 };
 
 // ─── Stat card (existing) ─────────────────────────────────────
-const StatCard = ({ icon: Icon, label, value, sub, color }) => (
-  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4">
-    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}>
-      <Icon className="w-6 h-6 text-white" />
+const StatCard = ({ icon: Icon, label, value, sub, color, to }) => {
+  const card = (
+    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex items-start gap-4 hover:border-blue-500 hover:bg-slate-800 transition-all duration-200 cursor-pointer">
+      <div
+        className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}
+      >
+        <Icon className="w-6 h-6 text-white" />
+      </div>
+
+      <div>
+        <p className="text-slate-400 text-sm">{label}</p>
+        <p className="text-3xl font-bold text-white mt-0.5">{value}</p>
+        {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
+      </div>
     </div>
-    <div>
-      <p className="text-slate-400 text-sm">{label}</p>
-      <p className="text-3xl font-bold text-white mt-0.5">{value}</p>
-      {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
-    </div>
-  </div>
-);
+  );
+
+  return to ? <Link to={to}>{card}</Link> : card;}
 const VisitorModal = ({ visitor: v, onClose }) => {
   if (!v) return null;
   return (
@@ -178,20 +184,54 @@ const Dashboard = () => {
         </div>
 
         {/* ── Stats grid (5 cards — visitor card নতুন) ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <StatCard icon={HiOutlineDocumentText} label="Total Blogs"    value={stats.blogs}                  sub={`${stats.published} published`} color="bg-blue-600"   />
-          <StatCard icon={HiOutlinePencil}       label="Drafts"         value={stats.drafts}                 sub="Pending publish"                color="bg-amber-500"  />
-          <StatCard icon={HiOutlineUsers}        label="Team Members"   value={stats.team}                   sub="Active members"                 color="bg-violet-600" />
-          <StatCard icon={HiOutlineEye}          label="Total Views"    value={stats.views.toLocaleString()} sub="Across all posts"               color="bg-emerald-600"/>
-          {/* ↓ নতুন visitor card */}
-          <StatCard
-            icon={HiOutlineGlobe}
-            label="Total Visitors"
-            value={vLoading ? "···" : (visitorTotal ?? 0).toLocaleString()}
-            sub="Unique IPs"
-            color="bg-cyan-600"
-          />
-        </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+  <StatCard
+    icon={HiOutlineDocumentText}
+    label="Total Blogs"
+    value={stats.blogs}
+    sub={`${stats.published} published`}
+    color="bg-blue-600"
+    to="/admin/blogs"
+  />
+
+  <StatCard
+    icon={HiOutlinePencil}
+    label="Drafts"
+    value={stats.drafts}
+    sub="Pending publish"
+    color="bg-amber-500"
+    to="/admin/blogs"
+  />
+
+  <StatCard
+    icon={HiOutlineUsers}
+    label="Team Members"
+    value={stats.team}
+    sub="Active members"
+    color="bg-violet-600"
+    to="/admin/team"
+  />
+
+  <StatCard
+    icon={HiOutlineEye}
+    label="Total Views"
+    value={stats.views.toLocaleString()}
+    sub="Across all posts"
+    color="bg-emerald-600"
+    to="/admin/blogs"
+  />
+
+  <StatCard
+    icon={HiOutlineGlobe}
+    label="Total Visitors"
+    value={vLoading ? "···" : (visitorTotal ?? 0).toLocaleString()}
+    sub="Unique IPs"
+    color="bg-cyan-600"
+    to="/admin/visitors"
+  />
+
+</div>
 
         {/* ── Visitor Table (নতুন) ── */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
@@ -222,12 +262,8 @@ const Dashboard = () => {
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-slate-500 text-xs w-5 text-right">{i + 1}</span>
                     {/* <span className="text-sm font-mono text-cyan-400">{v.ip}</span> */}
-                    <span
-  className="text-sm font-mono text-cyan-400 cursor-pointer hover:underline"
-  onClick={() => setSelectedVisitor(v)}
->
-  {v.ip}
-</span>
+                    <span className="text-sm font-mono text-cyan-400 cursor-pointer hover:underline" onClick={() => setSelectedVisitor(v)}>{v.ip}
+                    </span>
                     <span className="text-base" title={v.device}>{DEVICE[v.device] || "❓"}</span>
                   </div>
 
