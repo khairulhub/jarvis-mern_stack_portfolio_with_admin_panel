@@ -30,6 +30,7 @@ app.use("/api/photo-categories",  require("./routes/photoCategoryRoutes"));
 app.use("/api/contactinfo", require("./routes/contactInfoRoutes"));
 app.use("/api/footer-brand", require("./routes/footerBrandRoutes"));
 app.use("/api/clients", require("./routes/clientRoutes"));
+app.use("/api/visitors", require("./routes/visitorRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -178,6 +179,15 @@ const seedFooterBrand = async () => {
 };
 
 
+const seedVisitors = async () => {
+  const Visitor = require("./models/Visitor");
+  const count = await Visitor.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Visitors already seeded (${count}) — skip.`);
+  const data = require("./data/visitor.seed.json");
+  await Visitor.insertMany(data);
+  console.log(`✅ Visitors seeded — ${data.length} entries inserted.`);
+};
+
 // ── Start ────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
@@ -197,6 +207,7 @@ mongoose
     await seedPhotos();
     await seedContactInfo();
     await seedFooterBrand();
+    await seedVisitors();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {

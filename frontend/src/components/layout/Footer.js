@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getContactInfo, getFooterBrand } from "../../utils/api";
 
 const navLinks = [
-  { to: "/",           label: "HOME"       },
-  { to: "/about",      label: "ABOUT"      },
-  { to: "/services",   label: "SERVICES"   },
-  { to: "/works",      label: "WORKS"      },
-  { to: "/coding",     label: "CODING"     },
-  { to: "/networking", label: "NETWORKING" },
-  { to: "/contact",    label: "CONTACT"    },
+  { href: "/",           label: "HOME"  ,   sectionId: null   },
+  { href: "/#about",      label: "ABOUT"  , sectionId: "about"    },
+  { href: "/#services",   label: "SERVICES" ,sectionId: "services"   },
+  { href: "/#works",      label: "WORKS" , sectionId: "works"      },
+  { href: "/#coding",     label: "CODING" , sectionId: "coding"     },
+  { href: "/#networking", label: "NETWORKING" , sectionId: "networking" },
+  { href: "/#contact",    label: "CONTACT" , sectionId: "contact"    },
 ];
 
 const DEFAULT_BRAND = {
@@ -23,6 +23,7 @@ const DEFAULT_BRAND = {
 };
 
 const Footer = () => {
+  const location = useLocation();
   const [info,  setInfo]  = useState(null);
   const [brand, setBrand] = useState(DEFAULT_BRAND);
 
@@ -35,6 +36,33 @@ const Footer = () => {
       .then((res) => { if (res.success && res.data) setBrand(res.data); })
       .catch(() => {});
   }, []);
+
+  const scrollToSection = (id) => {
+  const el = document.getElementById(id);
+
+  if (el) {
+    const top = el.getBoundingClientRect().top + window.scrollY - 64;
+
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
+  }
+};
+
+const handleNavClick = (e, link) => {
+  if (!link.sectionId) return;
+
+  e.preventDefault();
+
+  if (location.pathname !== "/") {
+    window.location.href = link.href;
+    return;
+  }
+
+  scrollToSection(link.sectionId);
+};
+
 
   const socials = info
     ? [
@@ -168,21 +196,25 @@ const Footer = () => {
             >
               // NAVIGATE
             </div>
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="no-underline transition-colors duration-200"
-                style={{
-                  fontSize: 11, color: "#6a9bbf",
-                  fontFamily: "'Share Tech Mono', monospace", letterSpacing: 2,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#00e5ff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#6a9bbf")}
-              >
-                {label}
-              </Link>
-            ))}
+            {navLinks.map((link) => (
+  <a
+    key={link.href}
+    href={link.href}
+    onClick={(e) => handleNavClick(e, link)}
+    className="no-underline transition-colors duration-200"
+    style={{
+      fontSize: 11,
+      color: "#6a9bbf",
+      fontFamily: "'Share Tech Mono', monospace",
+      letterSpacing: 2,
+      cursor: "pointer",
+    }}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "#00e5ff")}
+    onMouseLeave={(e) => (e.currentTarget.style.color = "#6a9bbf")}
+  >
+    {link.label}
+  </a>
+))}
           </div>
 
           {/* col 3 — contact */}

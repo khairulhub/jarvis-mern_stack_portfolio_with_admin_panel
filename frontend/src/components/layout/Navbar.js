@@ -29,25 +29,35 @@ const DEFAULT_BRAND = {
 const useVisitors = () => {
   const [visitors, setVisitors] = useState(null);
   useEffect(() => {
-    const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
-    fetch(`${API}/api/visitors/track`, { method: "POST" })
-      .then((r) => r.json())
-      .then((data) => {
-        const target = data.totalVisitors;
-        if (!target) throw new Error("no data");
+    // const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API = (process.env.REACT_APP_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+    const run = async () => {
+      try {
+        // 1. Track করো (same IP হলে backend ignore করবে)
+        await fetch(`${API}/api/visitors/track`, { method: "POST" });
+
+        // 2. Total count আনো
+        const res = await fetch(`${API}/api/visitors/count`);
+        const data = await res.json();
+        if (!data.success) throw new Error("no data");
+
+        // 3. Count-up animation
+        const target = data.total;
         let n = 0;
         const id = setInterval(() => {
           n += Math.ceil((target - n) / 8);
           if (n >= target) { n = target; clearInterval(id); }
           setVisitors(n);
         }, 40);
-      })
-      .catch(() => {
-        let c = parseInt(localStorage.getItem("khairulhub_visits") || "1247");
-        c++;
-        localStorage.setItem("khairulhub_visits", String(c));
-        setVisitors(c);
-      });
+      } catch {
+        // Fallback: offline হলে localStorage থেকে দেখাও
+        // const c = parseInt(localStorage.getItem("khairulhub_visits") || "0");
+        // setVisitors(c);
+          setVisitors(null);
+      }
+    };
+
+    run();
   }, []);
   return visitors;
 };
