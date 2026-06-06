@@ -9,7 +9,7 @@ const {
   updateService,
   deleteService,
   toggleService,
-} = require("../controllers/serviceController");
+} = require("../controllers/Servicecontroller");  // Adjust the path as needed ami change korci 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 // ── Admin (protected) — MUST be before /:id routes ──────────────
