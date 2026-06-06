@@ -153,4 +153,33 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { register, login, firebaseLogin, getMe, updateProfile };
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword)
+      return res.status(400).json({ success: false, message: "Both current and new password are required" });
+
+    if (newPassword.length < 6)
+      return res.status(400).json({ success: false, message: "New password must be at least 6 characters" });
+
+    const user = await User.findById(req.user._id).select("+password");
+    if (!user)
+      return res.status(404).json({ success: false, message: "User not found" });
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch)
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { register, login, firebaseLogin, getMe, updateProfile, changePassword };

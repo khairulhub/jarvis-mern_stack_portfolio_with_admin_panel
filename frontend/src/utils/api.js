@@ -481,4 +481,9 @@ export const deleteDoc = async (id) => {
   return data;
 };
 
+export const changePassword = async (passwordData) => {
+  const { data } = await API.put("/auth/change-password", passwordData);
+  return data;
+};
+ 
 export default API;
