@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import CmdsPanel from "./CmdsPanel";
+import CmdsPanel from "../CmdsPanel";
 import { getHero } from "../../utils/api";
 import profileImgFallback from "../../uploads/images/formal-removebg-preview.png";
 

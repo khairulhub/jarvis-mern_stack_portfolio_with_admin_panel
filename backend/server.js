@@ -31,6 +31,7 @@ app.use("/api/contactinfo", require("./routes/contactInfoRoutes"));
 app.use("/api/footer-brand", require("./routes/footerBrandRoutes"));
 app.use("/api/clients", require("./routes/clientRoutes"));
 app.use("/api/visitors", require("./routes/visitorRoutes"));
+app.use("/api/docs",    require("./routes/documentationRoutes"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "MERN Starter API is running" });
@@ -178,7 +179,7 @@ const seedFooterBrand = async () => {
   console.log("✅ FooterBrand seeded.");
 };
 
-
+// seed visitors funtion -----------------
 const seedVisitors = async () => {
   const Visitor = require("./models/Visitor");
   const count = await Visitor.countDocuments();
@@ -186,6 +187,16 @@ const seedVisitors = async () => {
   const data = require("./data/visitor.seed.json");
   await Visitor.insertMany(data);
   console.log(`✅ Visitors seeded — ${data.length} entries inserted.`);
+};
+
+// seed documentation function -----------------
+const seedDocumentation = async () => {
+  const Documentation = require("./models/Documentation");
+  const count = await Documentation.countDocuments();
+  if (count > 0) return console.log(`ℹ️  Documentation already seeded (${count}) — skip.`);
+  const data = require("./data/documentation.seed.json");
+  await Documentation.insertMany(data);
+  console.log(`✅ Documentation seeded — ${data.length} pages inserted.`);
 };
 
 // ── Start ────────────────────────────────────────────────────────
@@ -208,6 +219,7 @@ mongoose
     await seedContactInfo();
     await seedFooterBrand();
     await seedVisitors();
+    await seedDocumentation();
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {

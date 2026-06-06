@@ -34,6 +34,7 @@ import PhotoAdmin         from "./pages/admin/PhotoAdmin";
 import PhotoCategoryAdmin from "./pages/admin/PhotoCategoryAdmin";
 import ContactInfoAdmin from "./pages/admin/ContactInfoAdmin";
 import FooterBrandAdmin from "./pages/admin/FooterBrandAdmin";
+import DocumentationAdmin from "./pages/admin/DocumentationAdmin";
 
 
 function App() {
@@ -101,6 +102,7 @@ function App() {
             <Route path="/admin/contact-info" element={<ContactInfoAdmin />} />
             <Route path="/admin/settings"        element={<Settings />} />
             <Route path="/admin/footer-brand"        element={<FooterBrandAdmin />} />
+            <Route path="/admin/docs"               element={<DocumentationAdmin />} />
             
             
           </Route>

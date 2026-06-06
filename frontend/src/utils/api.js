@@ -453,4 +453,32 @@ export const updateFooterBrand = async (brandData) => {
 };
 
 
+
+
+// ─── Documentation ───────────────────────────────────────────────
+export const getAllDocs = async () => {
+  const { data } = await API.get("/docs");
+  return data;
+};
+
+export const getDoc = async (id) => {
+  const { data } = await API.get(`/docs/${id}`);
+  return data;
+};
+
+export const createDoc = async (docData) => {
+  const { data } = await API.post("/docs", docData);
+  return data;
+};
+
+export const updateDoc = async (id, docData) => {
+  const { data } = await API.put(`/docs/${id}`, docData);
+  return data;
+};
+
+export const deleteDoc = async (id) => {
+  const { data } = await API.delete(`/docs/${id}`);
+  return data;
+};
+
 export default API;

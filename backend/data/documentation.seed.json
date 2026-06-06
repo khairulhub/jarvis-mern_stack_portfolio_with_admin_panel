@@ -1,0 +1,277 @@
+[
+  {
+    "title": "Project Overview",
+    "slug": "project-overview",
+    "icon": "ti-info-circle",
+    "category": "Getting Started",
+    "order": 1,
+    "sections": [
+      {
+        "heading": "What is this project?",
+        "body": "This is a full-stack MERN portfolio & personal website starter. It is built with MongoDB, Express.js, React, and Node.js. The project is designed for developers, network engineers, and freelancers who need a professional online presence with a powerful admin panel.",
+        "order": 1
+      },
+      {
+        "heading": "Tech Stack",
+        "body": "Frontend: React 18, React Router v6, Tailwind CSS, Axios, Firebase Auth\nBackend: Node.js, Express.js, MongoDB (Atlas), Mongoose, JWT, Multer, Firebase Admin\nStorage: ImgBB API for image uploads, Firebase Storage\nDeployment: Can be deployed on Vercel (frontend) + Render/Railway (backend) + MongoDB Atlas",
+        "order": 2
+      },
+      {
+        "heading": "Key Features",
+        "body": "- Dynamic Hero, About, Services, Works, Coding Reference, Networking, Gallery, Blog, Contact sections\n- Full admin panel with CRUD for every section\n- Firebase Google login support\n- Visitor tracking with analytics\n- Commands sidebar panel (CmdsPanel) for quick code reference\n- JWT-based authentication\n- Responsive design — mobile, tablet, desktop\n- Seed data for instant setup",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "title": "Folder Structure",
+    "slug": "folder-structure",
+    "icon": "ti-folder",
+    "category": "Getting Started",
+    "order": 2,
+    "sections": [
+      {
+        "heading": "Root Level",
+        "body": "mern-stack-starter-temp/\n├── backend/          ← Node.js + Express API\n└── frontend/         ← React application",
+        "order": 1
+      },
+      {
+        "heading": "Backend Structure",
+        "body": "backend/\n├── config/           ← db.js, firebase.js, multer.js\n├── controllers/      ← Business logic for each feature\n├── data/             ← Seed JSON files\n├── middleware/       ← authMiddleware.js (JWT protect + adminOnly)\n├── models/           ← Mongoose schemas\n├── routes/           ← Express routers\n├── uploads/          ← Local file storage (images, pdfs)\n├── utils/            ← imgbb.js helper\n├── .env              ← Environment variables\n├── package.json\n├── seed.js           ← Standalone seed script\n└── server.js         ← Entry point",
+        "order": 2
+      },
+      {
+        "heading": "Frontend Structure",
+        "body": "frontend/src/\n├── components/\n│   ├── common/       ← ImageUpload, LoadingSpinner, ProtectedRoute, RichTextEditor\n│   ├── layout/       ← Navbar, Footer, AdminLayout, HeroLayout, CmdsPanel\n│   └── CmdsPanel.jsx ← New featured commands sidebar\n│   └── VisitorCounter.jsx\n├── context/          ← AuthContext.js\n├── hooks/            ← useFirebaseStorage.js, useVisitorTracker.js\n├── pages/\n│   ├── admin/        ← All admin CRUD pages\n│   ├── auth/         ← Login, Register\n│   └── public/       ← Home, About, Services, Works, Coding, Networking, Gallery, Blog, Contact\n├── utils/\n│   └── api.js        ← All Axios API calls\n├── config/\n│   └── firebase.js\n└── App.js            ← Routes definition",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "title": "Installation & Setup",
+    "slug": "installation-setup",
+    "icon": "ti-settings",
+    "category": "Getting Started",
+    "order": 3,
+    "sections": [
+      {
+        "heading": "Step 1 — Clone and Install",
+        "body": "# Clone the project\ngit clone <your-repo-url>\ncd mern-stack-starter-temp\n\n# Install backend dependencies\ncd backend\nnpm install\n\n# Install frontend dependencies\ncd ../frontend\nnpm install",
+        "order": 1
+      },
+      {
+        "heading": "Step 2 — Environment Variables",
+        "body": "Copy .env.example to .env in both backend and frontend folders.\n\nBackend .env:\nPORT=5000\nMONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/dbname\nJWT_SECRET=your_secret_here\nJWT_EXPIRE=7d\nNODE_ENV=development\nIMGBB_API_KEY=your_imgbb_key\nFIREBASE_PROJECT_ID=your_project_id\nFIREBASE_CLIENT_EMAIL=your_client_email\nFIREBASE_PRIVATE_KEY=\"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n\"\n\nFrontend .env:\nREACT_APP_API_URL=http://localhost:5000/api\nREACT_APP_FIREBASE_API_KEY=...\nREACT_APP_FIREBASE_AUTH_DOMAIN=...\nREACT_APP_FIREBASE_PROJECT_ID=...",
+        "order": 2
+      },
+      {
+        "heading": "Step 3 — Fix Case-Sensitive Filename (Linux)",
+        "body": "On Linux, file names are case-sensitive. Run this fix before starting:\n\nmv backend/data/Service.seed.json backend/data/service.seed.json\n\nThis is needed because server.js requires './data/service.seed.json' (lowercase s).",
+        "order": 3
+      },
+      {
+        "heading": "Step 4 — Run the App",
+        "body": "Open TWO terminals:\n\n# Terminal 1 — Backend\ncd backend\nnpm run dev\n\n# Terminal 2 — Frontend\ncd frontend\nnpm start\n\nBackend runs on: http://localhost:5000\nFrontend runs on: http://localhost:3000",
+        "order": 4
+      },
+      {
+        "heading": "Step 5 — Seed Data",
+        "body": "Seed data runs automatically on first server start. You will see in terminal:\n✅ MongoDB connected\n✅ Hero seeded.\n✅ AboutInfo seeded.\n✅ Services seeded.\n... and so on.\n\nIf you want to re-seed manually:\ncd backend\nnode seed.js",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "title": "Backend API Reference",
+    "slug": "api-reference",
+    "icon": "ti-api",
+    "category": "Backend",
+    "order": 4,
+    "sections": [
+      {
+        "heading": "Base URL",
+        "body": "Development: http://localhost:5000/api\nAll admin routes require: Authorization: Bearer <token> header",
+        "order": 1
+      },
+      {
+        "heading": "Auth Routes",
+        "body": "POST   /api/auth/register    — Register admin\nPOST   /api/auth/login       — Login (returns JWT)\nPOST   /api/auth/firebase    — Firebase Google login\nGET    /api/auth/me          — Get current user (protected)\nPUT    /api/auth/profile     — Update profile (protected)",
+        "order": 2
+      },
+      {
+        "heading": "Content Routes (Public GET, Admin POST/PUT/DELETE)",
+        "body": "GET/PUT  /api/hero            — Hero section\nGET/PUT  /api/aboutinfo       — About info\nGET/POST/PUT/DELETE  /api/experiences   — Experiences\nGET/POST/PUT/DELETE  /api/clients       — Clients\nGET/POST/PUT/DELETE  /api/services      — Services\nGET/POST/PUT/DELETE  /api/works         — Works / Projects\nGET/POST/PUT/DELETE  /api/codings       — Coding references\nGET/POST/PUT/DELETE  /api/networks      — Networking topics\nGET/POST/PUT/DELETE  /api/photos        — Gallery photos\nGET/POST/PUT/DELETE  /api/photo-categories — Photo categories\nGET/POST/PUT/DELETE  /api/blogs         — Blog posts\nGET/POST/PUT/DELETE  /api/team          — Team members\nGET/PUT  /api/contactinfo     — Contact info\nGET/PUT  /api/footer-brand    — Footer & navbar brand\nGET/POST/PUT/DELETE  /api/docs          — Documentation pages",
+        "order": 3
+      },
+      {
+        "heading": "Visitor Routes",
+        "body": "POST /api/visitors/track       — Track a visitor (public)\nGET  /api/visitors/count       — Total visitor count (public)\nGET  /api/visitors/details     — Visitor list (admin protected)",
+        "order": 4
+      },
+      {
+        "heading": "Upload Route",
+        "body": "POST /api/upload/image   — Upload image to ImgBB (admin)\nPOST /api/upload/pdf     — Upload PDF locally (admin)\nReturns: { success: true, url: '...' }",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "title": "Frontend Pages & Routes",
+    "slug": "frontend-routes",
+    "icon": "ti-layout",
+    "category": "Frontend",
+    "order": 5,
+    "sections": [
+      {
+        "heading": "Public Routes",
+        "body": "/              → Home (Hero + About + Services + Works + Coding + Networking + Gallery + Contact)\n/blog          → Blog list\n/blog/:slug    → Blog detail\n/team          → Team page",
+        "order": 1
+      },
+      {
+        "heading": "Admin Routes (Protected — requires login)",
+        "body": "/admin/login\n/admin/register\n/admin/dashboard\n/admin/hero\n/admin/about\n/admin/clients\n/admin/experiences\n/admin/services\n/admin/works\n/admin/codings\n/admin/networks\n/admin/blogs\n/admin/blogs/create\n/admin/blogs/edit/:id\n/admin/gallery\n/admin/gallery-categories\n/admin/team\n/admin/contact-info\n/admin/footer-brand\n/admin/docs\n/admin/settings",
+        "order": 2
+      },
+      {
+        "heading": "Route Protection",
+        "body": "ProtectedRoute component (src/components/common/ProtectedRoute.js) wraps all /admin/* routes.\nIt checks AuthContext for a valid user. If not logged in, redirects to /admin/login.\nAdminLayout wraps every admin page with the sidebar navigation.",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "title": "Admin Panel Guide",
+    "slug": "admin-panel",
+    "icon": "ti-dashboard",
+    "category": "Frontend",
+    "order": 6,
+    "sections": [
+      {
+        "heading": "How to Access",
+        "body": "Go to: http://localhost:3000/admin/login\nRegister once: http://localhost:3000/admin/register\nAfter login you land on the Dashboard.",
+        "order": 1
+      },
+      {
+        "heading": "Sidebar Navigation Items",
+        "body": "Dashboard         — Stats overview (blog count, team count, visitors)\nHero Section      — Edit name, tagline, description, profile image, CV link, chips\nAbout Section     — Edit paragraphs, info cards, stats\nClients           — Add/Edit/Delete client logos\nExperiences       — Timeline of work/education experiences\nServices          — Services cards\nCoding Ref        — Code snippet reference cards\nNetworking        — Network topic cards\nBlogs             — Create, edit, publish/draft blog posts\nTeam              — Team member cards\nWorks             — Portfolio project cards\nPhoto Categories  — Gallery category management\nGallery           — Photo upload and management\nContact Info      — Phone, email, address\nFooter & Navbar   — Logo, brand name, social links\nDocumentation     — This page! Manage site docs\nSettings          — Profile settings",
+        "order": 2
+      },
+      {
+        "heading": "Image Upload Flow",
+        "body": "1. Admin selects an image in any form.\n2. ImageUpload component sends it to POST /api/upload/image.\n3. Backend (utils/imgbb.js) uploads to ImgBB API.\n4. ImgBB returns a public URL.\n5. URL is saved to MongoDB.\n6. Public site reads the URL directly from MongoDB.",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "title": "Authentication System",
+    "slug": "authentication",
+    "icon": "ti-lock",
+    "category": "Backend",
+    "order": 7,
+    "sections": [
+      {
+        "heading": "JWT Auth Flow",
+        "body": "1. Admin registers at /admin/register (creates user in MongoDB with bcrypt-hashed password).\n2. Logs in at POST /api/auth/login — server returns a JWT token (7 days).\n3. Frontend stores token in localStorage.\n4. Every API request sends: Authorization: Bearer <token>.\n5. authMiddleware.js (protect) verifies the token and attaches req.user.\n6. adminOnly middleware checks req.user.role === 'admin'.",
+        "order": 1
+      },
+      {
+        "heading": "Firebase Google Login",
+        "body": "1. Frontend triggers Google popup via Firebase SDK.\n2. Gets Firebase idToken.\n3. Sends to POST /api/auth/firebase.\n4. Backend verifies with Firebase Admin SDK.\n5. Creates or finds user in MongoDB.\n6. Returns JWT — same flow as normal login.",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "title": "CmdsPanel (Commands Sidebar)",
+    "slug": "cmds-panel",
+    "icon": "ti-terminal-2",
+    "category": "Frontend",
+    "order": 8,
+    "sections": [
+      {
+        "heading": "What is it?",
+        "body": "CmdsPanel is a floating sidebar triggered by the CMDS button on the right side of the homepage. It shows quick code/command references for Network, MERN, and Laravel topics.",
+        "order": 1
+      },
+      {
+        "heading": "Files Involved",
+        "body": "src/components/CmdsPanel.jsx        ← CORRECT version with command cards (use this)\nsrc/components/layout/CmdsPanel.js  ← Old simple version (shows 'No recent commands')\nsrc/components/layout/HeroLayout.js ← Contains the CMDS toggle button + imports CmdsPanel",
+        "order": 2
+      },
+      {
+        "heading": "Fix: Wrong CmdsPanel Being Used",
+        "body": "In HeroLayout.js, change:\nimport CmdsPanel from \"./CmdsPanel\";\n\nTo:\nimport CmdsPanel from \"../CmdsPanel\";\n\nThis will load the correct CmdsPanel.jsx with the full command cards UI.",
+        "order": 3
+      },
+      {
+        "heading": "Adding New Commands",
+        "body": "Open src/components/CmdsPanel.jsx.\nAdd a new object to the commands array:\n{\n  title: \"Your Command Title\",\n  tag: \"NETWORK\",\n  tagStyle: { background: \"rgba(250,204,21,0.08)\", color: \"#facc15\", border: \"1px solid rgba(250,204,21,0.25)\" },\n  code: `your command here`,\n}",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "title": "Deployment Guide",
+    "slug": "deployment",
+    "icon": "ti-cloud-upload",
+    "category": "Deployment",
+    "order": 9,
+    "sections": [
+      {
+        "heading": "Frontend — Vercel",
+        "body": "1. Push frontend/ folder to GitHub.\n2. Import to Vercel.\n3. Build command: npm run build\n4. Output dir: build\n5. Add all REACT_APP_* environment variables in Vercel dashboard.",
+        "order": 1
+      },
+      {
+        "heading": "Backend — Render or Railway",
+        "body": "1. Push backend/ folder to GitHub.\n2. Import to Render (or Railway).\n3. Start command: node server.js\n4. Add all backend .env variables in Render dashboard.\n5. Get your deployed URL (e.g. https://your-app.onrender.com).",
+        "order": 2
+      },
+      {
+        "heading": "Connect Frontend to Deployed Backend",
+        "body": "In Vercel, set:\nREACT_APP_API_URL=https://your-backend.onrender.com/api\n\nAlso update backend server.js CORS:\napp.use(cors({ origin: \"https://your-frontend.vercel.app\", credentials: true }));",
+        "order": 3
+      },
+      {
+        "heading": "MongoDB Atlas",
+        "body": "1. Create a free cluster at mongodb.com/atlas.\n2. Create a DB user with read/write access.\n3. Whitelist IP: 0.0.0.0/0 (allow all) for cloud deployment.\n4. Get the connection string and paste in MONGODB_URI.",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "title": "Common Errors & Fixes",
+    "slug": "troubleshooting",
+    "icon": "ti-bug",
+    "category": "Troubleshooting",
+    "order": 10,
+    "sections": [
+      {
+        "heading": "ERR_CONNECTION_REFUSED on port 5000",
+        "body": "Cause: Backend server is not running.\nFix:\ncd backend && npm install && npm run dev\n\nMake sure you see: 🚀 Server running on port 5000",
+        "order": 1
+      },
+      {
+        "heading": "MongoDB connection error",
+        "body": "Cause: Wrong MONGODB_URI or IP not whitelisted.\nFix:\n1. Check backend/.env MONGODB_URI is correct.\n2. In MongoDB Atlas → Network Access → Add IP 0.0.0.0/0.\n3. Verify username and password in the connection string.",
+        "order": 2
+      },
+      {
+        "heading": "service.seed.json not found (Linux)",
+        "body": "Cause: File is named Service.seed.json but server.js requires service.seed.json (lowercase).\nFix:\nmv backend/data/Service.seed.json backend/data/service.seed.json",
+        "order": 3
+      },
+      {
+        "heading": "CmdsPanel shows 'No recent commands'",
+        "body": "Cause: HeroLayout.js is importing the wrong CmdsPanel.\nFix in HeroLayout.js:\nChange: import CmdsPanel from \"./CmdsPanel\";\nTo:     import CmdsPanel from \"../CmdsPanel\";",
+        "order": 4
+      },
+      {
+        "heading": "Images not uploading",
+        "body": "Cause: IMGBB_API_KEY is missing or wrong.\nFix:\n1. Get a free API key from imgbb.com.\n2. Set IMGBB_API_KEY=your_key in backend/.env.\n3. Restart backend server.",
+        "order": 5
+      }
+    ]
+  }
+]
