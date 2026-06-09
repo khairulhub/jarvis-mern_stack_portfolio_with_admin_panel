@@ -46,6 +46,7 @@ const ICONS = {
   image:      "M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z",
   undo:       "M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z",
   redo:       "M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z",
+  video:      "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z",
 };
 
 // ─── Main Component ────────────────────────────────────────────────
@@ -117,6 +118,33 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
     }
   }, [handleImageFile]);
 
+  // ── insert YouTube/video embed ───────────────────────────────────
+  const insertVideo = useCallback(() => {
+    const url = window.prompt("Enter YouTube or video URL:", "https://www.youtube.com/watch?v=");
+    if (!url) return;
+
+    let embedHtml = "";
+
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+    if (ytMatch) {
+      const id = ytMatch[1];
+      embedHtml = `<div style="position:relative;padding-bottom:56.25%;height:0;margin:12px 0;border-radius:12px;overflow:hidden;">
+        <iframe src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;">
+        </iframe></div>`;
+    } else {
+      // Direct video file
+      embedHtml = `<video controls style="max-width:100%;border-radius:12px;margin:12px 0;">
+        <source src="${url}" />Your browser does not support video.
+      </video>`;
+    }
+
+    editorRef.current?.focus();
+    document.execCommand("insertHTML", false, embedHtml);
+    onChange(editorRef.current?.innerHTML || "");
+  }, [onChange]);
+
   // ── insert link ──────────────────────────────────────────────────
   const insertLink = useCallback(() => {
     const url = window.prompt("Enter URL:", "https://");
@@ -134,12 +162,16 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
   }, [onChange]);
 
   // ── set initial HTML ─────────────────────────────────────────────
-  // Only set once on mount / when value changes externally (avoid cursor jump)
-  const lastExternal = useRef(value);
-  if (editorRef.current && value !== lastExternal.current && value !== editorRef.current.innerHTML) {
-    editorRef.current.innerHTML = value || "";
-    lastExternal.current = value;
-  }
+  // useEffect ensures DOM is ready, and only updates when value arrives
+  // externally (e.g. async fetch in edit mode) — does not disrupt typing
+  const lastExternal = useRef("");
+  useEffect(() => {
+    if (!editorRef.current) return;
+    if (value !== lastExternal.current && value !== editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = value || "";
+      lastExternal.current = value;
+    }
+  }, [value]);
 
   return (
     <div className="w-full space-y-1.5">
@@ -208,6 +240,11 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
         {/* Link */}
         <ToolBtn onClick={insertLink} title="Insert Link">
           <Icon d={ICONS.link} />
+        </ToolBtn>
+
+        {/* Video embed */}
+        <ToolBtn onClick={insertVideo} title="Embed YouTube or video URL">
+          <Icon d={ICONS.video} />
         </ToolBtn>
 
         {/* Image upload */}
@@ -293,7 +330,7 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
       `}</style>
 
       <p className="text-xs text-slate-600">
-        Drag & drop or paste images — they auto-upload to imgBB.
+        Drag &amp; drop or paste images — auto-upload to imgBB. Paste YouTube link to embed video.
         Supports bold, italic, headings, lists, code blocks, alignment &amp; more.
       </p>
     </div>
