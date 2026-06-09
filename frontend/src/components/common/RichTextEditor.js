@@ -1,4 +1,4 @@
-import React, { useRef, useCallback,useEffect  } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {
@@ -107,16 +107,40 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
 
   // ── paste images ─────────────────────────────────────────────────
   const handlePaste = useCallback((e) => {
+    // ── image paste → upload to imgBB ───────────────────────────
     const items = e.clipboardData?.items;
-    if (!items) return;
-    for (const item of items) {
-      if (item.type.startsWith("image/")) {
-        e.preventDefault();
-        handleImageFile(item.getAsFile());
-        return;
+    if (items) {
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          e.preventDefault();
+          handleImageFile(item.getAsFile());
+          return;
+        }
       }
     }
-  }, [handleImageFile]);
+
+    // ── text/html paste → strip inline color & background styles ─
+    const html = e.clipboardData?.getData("text/html");
+    if (html) {
+      e.preventDefault();
+      // Parse pasted HTML and remove color/background inline styles
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const allNodes = doc.body.querySelectorAll("*");
+      allNodes.forEach((node) => {
+        node.style.removeProperty("color");
+        node.style.removeProperty("background");
+        node.style.removeProperty("background-color");
+        node.style.removeProperty("font-family");
+        // Remove empty style attribute
+        if (!node.getAttribute("style")) node.removeAttribute("style");
+      });
+      const cleaned = doc.body.innerHTML;
+      document.execCommand("insertHTML", false, cleaned);
+      onChange(editorRef.current?.innerHTML || "");
+      return;
+    }
+  }, [handleImageFile, onChange]);
 
   // ── insert YouTube/video embed ───────────────────────────────────
   const insertVideo = useCallback(() => {
@@ -291,8 +315,11 @@ const RichTextEditor = ({ value, onChange, label = "Content *" }) => {
           prose-pre:bg-slate-900 prose-pre:text-emerald-400 prose-pre:rounded-xl prose-pre:p-4
           prose-img:rounded-xl prose-img:max-w-full
           [&_img]:cursor-move
+          [&_font]:!text-slate-200
+          [&_span]:!text-slate-200
+          [&_*:not(code):not(pre)]:!text-slate-200
         `}
-        style={{ lineHeight: 1.8 }}
+        style={{ lineHeight: 1.8, color: '#f1f5f9' }}
         data-placeholder="Write your blog content here… Drag & drop or paste images directly!"
       />
 
